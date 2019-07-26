@@ -1,12 +1,9 @@
 {
   "name": "create-react-express-jwt-server",
-  "homepage": "https://e-z-dig.herokuapp.com/",
   "version": "1.0.0",
   "description": "Mern Demo",
   "main": "server.js",
   "scripts": {
-    "predeploy": "npm run build",
-   "deploy": "gh-pages -d build",
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
     "start:prod": "node server.js",
     "start:dev": "concurrently \"nodemon --ignore 'client/*'\" \"npm run client\"",
