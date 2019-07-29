@@ -1,6 +1,11 @@
 import axios from 'axios';
 export default {
   // Gets a single user by id
+
+  scrapeProduct: () => {
+    return axios.get("/scrape");
+  },
+
   getUser: (id) => {
     return axios.get(`/api/user/${id}`);
   },
