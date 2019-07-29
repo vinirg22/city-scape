@@ -37,18 +37,59 @@ class Navbar extends Component {
 
     render() {
         return (
-            <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-                <div className="container">
-                    <Link className="navbar-brand" to="/">React JWT App</Link>
-                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarNav">
-                        <ul className="navbar-nav mr-auto">
-                        </ul>
-                        {this.showNavigation()}
-                    </div>
-                </div>
+            <nav class="main-menu">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <ul>
+                    <li>
+                        <a href="/">
+                            <i class="fa fa-home fa-2x"></i>
+                            <span class="nav-text">
+                                Home
+                        </span>
+                        </a>
+
+                    </li>
+                    <li class="has-subnav">
+                        <a href="/About">
+                            <i class="fa fa-laptop fa-2x"></i>
+                            <span class="nav-text">
+                                About
+                        </span>
+                        </a>
+
+                    </li>
+                    <li class="has-subnav">
+                        <a href="/Login">
+                            <i class="fa fa-sign-in"></i>
+                            <span class="nav-text">
+                                Log in
+                        </span>
+                        </a>
+
+                    </li>
+                    <li class="has-subnav">
+                        <a href="/Signup">
+                            <i class="fa fa-sign-out fa-lg"></i>
+                            <span class="nav-text">
+                                Sign Up
+                        </span>
+                        </a>
+
+                    </li>
+                </ul>
+
+                <ul class="logout">
+                    <li>
+                        <a className="nav-link" href="/" onClick={() => this.Auth.logout()}>
+                            <i class="fa fa-power-off fa-2x"></i>
+                            <span class="nav-text">
+                                Logout
+                        </span>
+                        </a>
+                    </li>
+                </ul>
             </nav>
         )
     }
