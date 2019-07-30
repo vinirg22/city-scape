@@ -40,7 +40,7 @@ class Navbar extends Component {
     render() {
         return (
             
-            <nav className="main-menu mr-auto">
+            <nav className="main-menu">
                 <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
                     <li>
                         <Link className="nav-link" to="/">
