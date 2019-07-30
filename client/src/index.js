@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -23,13 +24,14 @@ if(localStorage.getItem("id_token")) {
 
 ReactDOM.render(
     <Router>
-        <div>
             <Navbar />
+        <div>
             <Route exact path="/" component={Home} />
             <Route exact path="/about" component={About} />
+            <Route exact path="/profile" component={Profile} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={Signup} />
-            <Route exact path="/profile" component={Profile} />
+            
         </div>
     </Router>
     , document.getElementById('root')
