@@ -26,7 +26,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Import routes and give the server access to them.
-var routes = require("./controllers/controller.js");
+const routes = require("./routes");
+
 app.use(routes);
 
 mongoose

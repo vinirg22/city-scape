@@ -70,12 +70,19 @@ class Navbar extends Component {
 
                     </li>
                     <li class="has-subnav">
-                        <a href="/Signup">
+                        <Link className="nav-link" to="/signup">
+                            <i class="fa fa-sign-out fa-lg"></i>
+                            <span class="nav-text">
+                                Sign Up
+                            </span>
+                        </Link>
+
+                        {/* <a href="/Signup">
                             <i class="fa fa-sign-out fa-lg"></i>
                             <span class="nav-text">
                                 Sign Up
                         </span>
-                        </a>
+                        </a> */}
 
                     </li>
                 </ul>
