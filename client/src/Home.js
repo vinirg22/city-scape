@@ -31,6 +31,16 @@ class Home extends Component {
             .catch(err => alert(err));
     }
 
+    saveSearch = product => {
+
+        API.saveProduct(product)
+        .then((res) => {
+            const products = this.state.products.filter(item => product.id !== item.id);
+            
+            this.setState({ products: products });
+        })
+    }
+
     render() {
         return (
             <div>
@@ -67,7 +77,7 @@ class Home extends Component {
                                         <h5 className="card-title">{product.title}</h5>
                                         <div className="clearfix">
                                             <p className="card-text float-left">{product.price}</p>
-                                            <button className="btn-add float-right">Add</button>
+                                            <button className="btn-add float-right" onClick={() => this.saveSearch(product)}>Add</button>
                                         </div>
                                     </div>
                                 </div>

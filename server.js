@@ -31,7 +31,7 @@ const routes = require("./routes");
 app.use(routes);
 
 mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ezdigDB', {useNewUrlParser: true, useCreateIndex: true})
+  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/emergeDB', {useNewUrlParser: true, useCreateIndex: true})
   .then(() => console.log("MongoDB Connected!"))
   .catch(err => console.error(err));
 
