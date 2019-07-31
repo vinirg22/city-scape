@@ -12,6 +12,7 @@ class Profile extends Component {
   };
 
   componentDidMount() {
+    console.log("...." + this.props.user.id);
     API.getUser(this.props.user.id).then(res => {
       this.setState({
         username: res.data.username,
