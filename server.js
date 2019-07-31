@@ -26,6 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Import routes and give the server access to them.
+// Commenting out in the meantime. Will be adding to routes file. ******
 const routes = require("./routes");
 
 app.use(routes);
