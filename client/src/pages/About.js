@@ -5,7 +5,6 @@ import '../App.css';
 class About extends Component {
 
     render() {
-        console.log(process.env.REACT_APP_SECRET_CODE);
         return (
 
             // <!-- Start Our Team
@@ -33,7 +32,7 @@ class About extends Component {
                                 <div className="member-content">
                                     <h5>Can Atay</h5>
                                     <span>Web Developer</span>
-                                    <p><a class="text-black" target="_blank" href="https://github.com/canjohn1905"><i class="fab fa-github-square"></i>
+                                    <p><a className="text-black" target="_blank" rel="noopener noreferrer" href="https://github.com/canjohn1905"><i className="fab fa-github-square"></i>
                                         Can Atay Github </a></p>
                                 </div>
                                 {/* <!-- /member name & designation --> */}
@@ -54,7 +53,7 @@ class About extends Component {
                                 <div className="member-content">
                                     <h5>Irving Aramburo</h5>
                                     <span>Web Developer</span>
-                                    <p><a class="text-black" target="_blank" href="https://github.com/vinirg22"><i class="fab fa-github-square"></i> Irving
+                                    <p><a className="text-black" target="_blank" rel="noopener noreferrer" href="https://github.com/vinirg22"><i className="fab fa-github-square"></i> Irving
 
                                     Aramburo Github</a></p>
                                 </div>
@@ -74,7 +73,7 @@ class About extends Component {
                                 <div className="member-content">
                                     <h5>Damian Sanchez</h5>
                                     <span>Web Developer</span>
-                                    <p><a class="text-black" target="_blank" href="https://github.com/xxdamianxx"><i class="fab fa-github-square"></i>
+                                    <p><a className="text-black" target="_blank" rel="noopener noreferrer" href="https://github.com/xxdamianxx"><i className="fab fa-github-square"></i>
 
                                         Damian Sanchez</a></p>
                                 </div>
@@ -93,7 +92,7 @@ class About extends Component {
                                 <div className="member-content">
                                     <h5>Kanwee Kiatnikorn</h5>
                                     <span>Web Developer</span>
-                                    <p><a class="text-black" target="_blank" href="https://github.com/kkiathub"><i class="fab fa-github-square"></i>
+                                    <p><a className="text-black" target="_blank" rel="noopener noreferrer" href="https://github.com/kkiathub"><i className="fab fa-github-square"></i>
 
                                         Kanwee Kiatnikorn</a></p>
                                 </div>

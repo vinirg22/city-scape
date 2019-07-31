@@ -92,7 +92,7 @@ class Navbar extends Component {
                         <br />
                         <br />
                         <Link className="nav-link" to="/">
-                            <img src="./images/logotr.png" classname="center logo" alt="logo" width="60" height="60"></img>
+                            <img src="./images/logotr.png" className="center logo" alt="logo" width="60" height="60"></img>
                         </Link>
                     </li>
                 </ul>

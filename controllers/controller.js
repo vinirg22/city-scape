@@ -36,50 +36,86 @@ function XMLtoJSON(xmlData) {
   console.log(jsonObj.RateV4Response.Package.Postage.SpecialServices);
 
 }
+
+const detailTags = [
+  "div#detailBullets_feature_div",
+  "table#productDetails_techSpec_section_1",
+  "table#productDetails_detailBullets_sections1",
+  "td.bucket .content"
+];
+
 module.exports = {
 
   scrapeDetail: function (req, res) {
-    console.log("ScrapeDetail "+ req.params.id);
-    
-    // axios.get("https://www.amazon.com/dp/" + req.params.id).then((response) => {
-    axios.get("https://www.amazon.com/dp/B07B9BNN24").then((response) => {
-    // axios.get("https://www.amazon.com/dp/B072LNQBZT").then((response) => {
-    // axios.get("https://www.amazon.com/dp/B002UT92EY").then((response) => {
-      const $ = cheerio.load(response.data);
+    console.log("ScrapeDetail " + req.params.id);
 
-      // Now, we grab every h2 within an article tag, and do the following:
-      var numRec = $("td.bucket").length;
-      console.log("rec found : " + numRec);
-      if (numRec===1) {
-        $("td.bucket").each(function (i, element) {
-          var dimension = $(this)
-          .find("li").eq(0)
-          .html().trim();
-          var weight = $(this)
-          .find("li").eq(1)
-          .html().trim();
-          console.log("dimension " + dimension);
-          console.log("weight " + weight);
-        });
-        
-      } else {
-        // div.detailBullets_feature_div
-        // productDetails_techSpec_section_1
-        // td.bucket.content
-        console.log("else found " + $("table#productDetails_detailBullets_sections1").length);
-        $("table#productDetails_detailBullets_sections1").each(function (i, element) {
-          var dimension = $(this)
-          .find("td").eq(0)
-          .html().trim();
-          var weight = $(this)
-          .find("td").eq(1)
-          .html().trim();
-          console.log("dimension " + dimension);
-          console.log("weight " + weight);
-        });
-  
+    // axios.get("https://www.amazon.com/dp/" + req.params.id).then((response) => {
+
+    /*  B07DD3W154
+      B0779ZXQ9J
+      B01I9OFGR0
+      B07KX7BP43
+      B07B9BNN24
+      B072LNQBZT
+      B01I9OED06
+      B002UT92EY */
+    axios.get("https://www.amazon.com/dp//B07JN74TJ2").then((response) => {
+      const $ = cheerio.load(response.data);
+      for (let i = 0; i < detailTags.length; i++) {
+        let numRec = $(detailTags[i]).length;
+        if (numRec > 0) {
+          console.log("found " + numRec + " " + detailTags[i]);
+          let sdim = "", weight = "", lable = "";
+          $(detailTags[i]).each(function (i, element) {
+            switch ($(this).children().get(0).name) {
+              case "tbody":
+                $(this).find('tr').each(function (index, element) {
+                  label = $(element).find("th").text().trim();
+                  switch (label) {
+                    case "Product Dimensions":
+                    case "Package Dimensions":
+                      sdim = $(element).find("td").text().trim();
+                      break;
+                    case "Item Weight":
+                    case "Shipping Weight":
+                      weight = $(element).find("td").text().trim();
+                      break;
+                  }
+                  if (weight && sdim) {
+                    return false;
+                  }
+                });
+                console.log("found : " + sdim + " | " + weight);
+                break;
+              case "ul":
+                console.log("found ul tag");
+                $(this).find('li').each(function (index, element) {
+                  // console.log(index + " " + $(element).text().trim())
+                  var item = $(element).text().split(":");
+                  label = item[0].trim();
+                  switch (label) {
+                    case "Product Dimensions":
+                    case "Package Dimensions":
+                      sdim = item[1].trim();
+                      break;
+                    case "Item Weight":
+                    case "Shipping Weight":
+                      weight = item[1].trim();
+                      break;
+                  }
+                  if (weight && sdim) {
+                    return false;
+                  }
+                });
+                console.log("found : " + sdim + " | " + weight);
+                break;
+            }
+          });
+          break;
+        }
+
       }
-    });
+    })
       // .catch(err => {
       //   console.log(err);
       // });
@@ -105,6 +141,9 @@ module.exports = {
       $("div.s-result-item").each(function (i, element) {
         // Save an empty result object
         const result = {};
+
+        result.id = $(this).
+          attr("data-asin");
 
         result.image = $(this)
           .find(".s-image")

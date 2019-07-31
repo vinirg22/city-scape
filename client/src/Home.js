@@ -67,6 +67,7 @@ class Home extends Component {
                                         <h5 className="card-title">{product.title}</h5>
                                         <div className="clearfix">
                                             <p className="card-text float-left">{product.price}</p>
+                                            <p className="card-text">{product.id}</p>
                                             <button className="btn-add float-right">Add</button>
                                         </div>
                                     </div>

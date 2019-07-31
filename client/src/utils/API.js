@@ -4,7 +4,7 @@ export default {
 
   scrapeProduct: (searchWord) => {
     return axios.get(`/api/products/scrape/${searchWord}`);
-    // return axios.get(`/api/products/scrapeDetail/${searchWord}`);
+    // return axios.get(`/api/products/scrapeDetail/xxx`);
   },
 
   getUser: (id) => {
