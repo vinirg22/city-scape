@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.css';
 import React, { Component } from 'react';
 import './App.css';
 import API from './utils/API';
@@ -33,6 +34,7 @@ class Home extends Component {
     render() {
         console.log(process.env.REACT_APP_SECRET_CODE);
         return (
+            <div>
             <div className="hero-image">
                 <img className="hero-image fluid" src="../images/Home-header.png" alt="header" />
                 <div className="hero-text">
@@ -52,6 +54,9 @@ class Home extends Component {
                         </div>
                     </div>
 
+                </div>
+            </div>
+            
                     <div className="container search-result py-3">
                         <h5>Products found...</h5>
                         <div className="card-columns">
@@ -70,8 +75,7 @@ class Home extends Component {
                             ))}
                         </div>
                     </div>
-                </div>
-            </div>
+                    </div>
         );
     }
 }
