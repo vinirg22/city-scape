@@ -32,7 +32,6 @@ class Home extends Component {
     }
 
     render() {
-        console.log(process.env.REACT_APP_SECRET_CODE);
         return (
             <div>
             <div className="hero-image">
