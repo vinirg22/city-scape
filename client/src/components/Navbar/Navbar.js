@@ -1,5 +1,3 @@
-
-// import {Navbar} from 'react-bootstrap';
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import AuthService from '../AuthService';

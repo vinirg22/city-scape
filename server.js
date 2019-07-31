@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 // Import routes and give the server access to them.
 const routes = require("./routes");
 
-// app.use(routes);
+app.use(routes);
 
 mongoose
   .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ezdigDB', {useNewUrlParser: true, useCreateIndex: true})
