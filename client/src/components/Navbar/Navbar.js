@@ -1,3 +1,5 @@
+
+// import {Navbar} from 'react-bootstrap';
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import AuthService from '../AuthService';
@@ -11,93 +13,103 @@ class Navbar extends Component {
     showNavigation = () => {
         if (this.Auth.loggedIn()) {
             return (
-                <ul className="navbar-nav">
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/profile">Profile</Link>
-                    </li>
-                    <li className="nav-item">
-                        {/* this is not using the Link component to logout or user and then refresh the application to the start */}
-                        <a className="nav-link" href="/" onClick={() => this.Auth.logout()}>Logout</a>
-                    </li>
-                </ul>
+                <li className="has-subnav">
+                    <Link className="nav-link" to="/Profile">
+                        <i className="fa fa-user-circle-o fa-2x"></i>
+                        <span className="nav-text">
+                            My Product Page
+                        </span>
+                    </Link>
+
+                </li>
             );
         } else {
-            return (
-                <ul className="navbar-nav">
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/signup">Signup</Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/login">Login</Link>
-                    </li>
-                </ul>
-            );
+            return ([
+                <li className="has-subnav">
+                    <Link className="nav-link" to="/Login">
+                        <i className="fa fa-sign-in"></i>
+                        <span className="nav-text">
+                            Log in
+                        </span>
+                    </Link>
+
+                </li>,
+                <li className="has-subnav">
+                    <Link className="nav-link" to="/Signup">
+                        <i className="fa fa-sign-out fa-lg"></i>
+                        <span className="nav-text">
+                            Sign Up
+                        </span>
+                    </Link>
+
+                </li>
+            ]);
         }
     };
 
+    showLogout = () => {
+        if (this.Auth.loggedIn()) {
+
+            return (
+                <li>
+                    <Link className="nav-link" to="/" onClick={() => this.Auth.logout()}>
+                        <i className="fa fa-power-off fa-2x"></i>
+                        <span className="nav-text">
+                            Logout
+                        </span>
+                    </Link>
+                </li>
+            );
+        }
+    }
+
     render() {
         return (
-            <nav class="main-menu">
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="fa fa-bars"></span>
-                </button>
-                <ul>
+
+            <nav className="main-menu">
+                <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
                     <li>
-                        <a href="/">
-                            <i class="fa fa-home fa-2x"></i>
-                            <span class="nav-text">
+                        <Link className="nav-link" to="/">
+                            <i className="fa fa-home fa-2x"></i>
+                            <span className="nav-text">
                                 Home
                         </span>
-                        </a>
-
-                    </li>
-                    <li class="has-subnav">
-                        <a href="/About">
-                            <i class="fa fa-laptop fa-2x"></i>
-                            <span class="nav-text">
-                                About
-                        </span>
-                        </a>
-
-                    </li>
-                    <li class="has-subnav">
-                        <a href="/Login">
-                            <i class="fa fa-sign-in"></i>
-                            <span class="nav-text">
-                                Log in
-                        </span>
-                        </a>
-
-                    </li>
-                    <li class="has-subnav">
-                        <Link className="nav-link" to="/signup">
-                            <i class="fa fa-sign-out fa-lg"></i>
-                            <span class="nav-text">
-                                Sign Up
-                            </span>
                         </Link>
 
-                        {/* <a href="/Signup">
-                            <i class="fa fa-sign-out fa-lg"></i>
-                            <span class="nav-text">
-                                Sign Up
+                    </li>
+                    <li className="has-subnav">
+                        <Link className="nav-link" to="/about">
+                            <i className="fa fa-laptop fa-2x"></i>
+                            <span className="nav-text">
+                                About
                         </span>
-                        </a> */}
+                        </Link>
 
+                    </li>
+                    {this.showNavigation()}
+
+                    <li>
+                        <br />
+                        <br />
+                        <Link className="nav-link" to="/">
+                            <img src="./images/logotr.png" classname="center logo" alt="logo" width="60" height="60"></img>
+                        </Link>
                     </li>
                 </ul>
 
-                <ul class="logout">
-                    <li>
-                        <a className="nav-link" href="/" onClick={() => this.Auth.logout()}>
-                            <i class="fa fa-power-off fa-2x"></i>
-                            <span class="nav-text">
+                <ul className="logout">
+                    {this.showLogout()}
+                    {/* <li>
+                        <Link className="nav-link" to="/" onClick={() => this.Auth.logout()}>
+                            <i className="fa fa-power-off fa-2x"></i>
+                            <span className="nav-text">
                                 Logout
                         </span>
-                        </a>
-                    </li>
+                        </Link>
+                    </li> */}
                 </ul>
             </nav>
+
         )
     }
 }
