@@ -13,6 +13,10 @@ export default {
   // sign up a user to our service
   signUpUser: (username, email, password, zipcode) => {
     return axios.post('api/user/signup', {username: username, email: email, password: password, zipcode: zipcode});
+  },
+
+  saveProduct: (product) => {
+    return axios.post('api/products/', product);
   }
 };
 

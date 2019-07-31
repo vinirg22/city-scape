@@ -9,7 +9,7 @@ var parser = require('fast-xml-parser');
 var he = require('he');
 
 // Import the models to use its database functions.
-// const db = require("../models");
+const db = require("../models");
 
 function XMLtoJSON(xmlData) {
   var options = {
@@ -50,6 +50,7 @@ module.exports = {
     console.log("ScrapeDetail " + req.params.id);
 
     // axios.get("https://www.amazon.com/dp/" + req.params.id).then((response) => {
+<<<<<<< HEAD
 
     /*  B07DD3W154
       B0779ZXQ9J
@@ -60,6 +61,11 @@ module.exports = {
       B01I9OED06
       B002UT92EY */
     axios.get("https://www.amazon.com/dp//B07JN74TJ2").then((response) => {
+=======
+    axios.get("https://www.amazon.com/dp/B07B9BNN24").then((response) => {
+      // axios.get("https://www.amazon.com/dp/B072LNQBZT").then((response) => {
+      // axios.get("https://www.amazon.com/dp/B002UT92EY").then((response) => {
+>>>>>>> d6fd40c8daf60f5e009279700888cf0de13648bd
       const $ = cheerio.load(response.data);
       for (let i = 0; i < detailTags.length; i++) {
         let numRec = $(detailTags[i]).length;
@@ -114,11 +120,50 @@ module.exports = {
           break;
         }
 
+<<<<<<< HEAD
       }
     })
       // .catch(err => {
       //   console.log(err);
       // });
+=======
+      // Now, we grab every h2 within an article tag, and do the following:
+      var numRec = $("td.bucket").length;
+      console.log("rec found : " + numRec);
+      if (numRec === 1) {
+        $("td.bucket").each(function (i, element) {
+          var dimension = $(this)
+            .find("li").eq(0)
+            .html().trim();
+          var weight = $(this)
+            .find("li").eq(1)
+            .html().trim();
+          console.log("dimension " + dimension);
+          console.log("weight " + weight);
+        });
+
+      } else {
+        // div.detailBullets_feature_div
+        // productDetails_techSpec_section_1
+        // td.bucket.content
+        console.log("else found " + $("table#productDetails_detailBullets_sections1").length);
+        $("table#productDetails_detailBullets_sections1").each(function (i, element) {
+          var dimension = $(this)
+            .find("td").eq(0)
+            .html().trim();
+          var weight = $(this)
+            .find("td").eq(1)
+            .html().trim();
+          console.log("dimension " + dimension);
+          console.log("weight " + weight);
+        });
+
+      }
+    });
+    // .catch(err => {
+    //   console.log(err);
+    // });
+>>>>>>> d6fd40c8daf60f5e009279700888cf0de13648bd
 
   },
   scrape: function (req, res) {
@@ -170,5 +215,22 @@ module.exports = {
       .catch(err => {
         console.log(err);
       });
-  }
+  },
+
+  saveProduct: function (req, res) {
+    console.log(req.body);
+    db.Product.create(req.body)
+      .then(data => res.json(data))
+      .catch(err => res.status(400).json(err));
+  },
+
+  findProduct: function (req, res) {
+
+  },
+
+  deleteProduct: function (req, res) {
+
+  },
+
+
 };
