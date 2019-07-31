@@ -46,6 +46,7 @@ app.post('/api/login', (req, res) => {
 
 // SIGNUP ROUTE
 app.post('/api/signup', (req, res) => {
+  console.log("got here");
   db.User.create(req.body)
     .then(data => res.json(data))
     .catch(err => res.status(400).json(err));
