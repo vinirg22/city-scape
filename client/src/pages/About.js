@@ -106,6 +106,7 @@ class About extends Component {
                         {/* <!-- end team member --> */}
                     </div>
                 </div>
+                
             </section>
 
         );
