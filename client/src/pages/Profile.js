@@ -38,10 +38,7 @@ class Profile extends Component {
         <p>Welcome: {this.state.username}</p>
         <Link to="/">Go home</Link>
 
-        <div className="container">
-          <div className="row d-flex justify-content-center">
-            <div className="col-sm-6 col-md-4">
-              One of three columns
+        
               <form action="/action_page.php">
                 Product Cost<br />
                 <input id="first" type="number" name="cost" /><br />
@@ -54,16 +51,8 @@ class Profile extends Component {
                 <button onClick={this.calc}>Result</button>
               </form>
             </div>
-            <div className="col-sm-6 col-md-4">
-              One of three columns
-    </div>
-            <div className="col-6 col-md-4">
-              One of three columns
-    </div>
-          </div>
-        </div>
-
-      </div>
+          
+      
 
 
     )
