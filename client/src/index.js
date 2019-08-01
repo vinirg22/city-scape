@@ -13,6 +13,7 @@ import axios from "axios";
 import About from './pages/About';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
+import Summary from './pages/Summary';
 import Signup from './pages/Signup';
 import Navbar from './components/Navbar';
 
@@ -29,6 +30,7 @@ ReactDOM.render(
             <Route exact path="/" component={Home} />
             <Route exact path="/about" component={About} />
             <Route exact path="/profile" component={Profile} />
+            <Route exact path="/summary" component={Summary} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={Signup} />
             

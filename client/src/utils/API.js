@@ -4,7 +4,10 @@ export default {
 
   scrapeProduct: (searchWord) => {
     return axios.get(`/api/products/scrape/${searchWord}`);
-    // return axios.get(`/api/products/scrapeDetail/xxx`);
+  },
+
+  obtainShippingInfo: (products) => {
+    return axios.get(`/api/products/scrapeDetail/${products}`);
   },
 
   getUser: (id) => {
@@ -17,6 +20,10 @@ export default {
 
   saveProduct: (product) => {
     return axios.post('api/products/', product);
+  },
+
+  getProduct: () => {
+    return axios.get('api/products/');
   }
 };
 

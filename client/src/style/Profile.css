@@ -1,0 +1,13 @@
+.myproduct-header {
+    padding: 20px;
+}
+
+.icon-shipping {
+    height: 25px;
+    margin-left: 10px;
+}
+
+.checkbox-focus {
+    border: 2px solid lightgray;
+    border-radius: 8px;
+}
