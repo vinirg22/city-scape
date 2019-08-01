@@ -10,7 +10,7 @@ const controller = require("../../controllers/controller");
 router.route("/scrape/:keyword")
   .get(controller.scrape);
 
-router.route("/scrapedetail/:id")
+router.route("/scrapeDetail/:id")
   .get(controller.scrapeDetail);
 
 router.route("/")

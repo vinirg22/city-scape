@@ -36,53 +36,133 @@ function XMLtoJSON(xmlData) {
   console.log(jsonObj.RateV4Response.Package.Postage.SpecialServices);
 
 }
+
+const detailTags = [
+  "div#detailBullets_feature_div",
+  "table#productDetails_techSpec_section_1",
+  "table#productDetails_detailBullets_sections1",
+  "td.bucket .content"
+];
+/*  B07DD3W154
+  B0779ZXQ9J
+  B01I9OFGR0
+  B07KX7BP43
+  B07B9BNN24
+  B072LNQBZT
+  B01I9OED06
+  B002UT92EY */
+
 module.exports = {
+
+  getLegitWeight: function (weightStr) {
+    return weightStr.split("(")[0].trim();
+
+  },
+  getLegitDimension: function (dimStr) {
+
+  },
 
   scrapeDetail: function (req, res) {
     console.log("ScrapeDetail " + req.params.id);
+    const idList = req.params.id.split("|");
+    console.log(idList);
 
-    // axios.get("https://www.amazon.com/dp/" + req.params.id).then((response) => {
-    axios.get("https://www.amazon.com/dp/B07B9BNN24").then((response) => {
-      // axios.get("https://www.amazon.com/dp/B072LNQBZT").then((response) => {
-      // axios.get("https://www.amazon.com/dp/B002UT92EY").then((response) => {
-      const $ = cheerio.load(response.data);
+    var numCompleted = 0;
+    var shippingInfoArr = [];
+    for (let x = 0; x < idList.length; x++) {
 
-      // Now, we grab every h2 within an article tag, and do the following:
-      var numRec = $("td.bucket").length;
-      console.log("rec found : " + numRec);
-      if (numRec === 1) {
-        $("td.bucket").each(function (i, element) {
-          var dimension = $(this)
-            .find("li").eq(0)
-            .html().trim();
-          var weight = $(this)
-            .find("li").eq(1)
-            .html().trim();
-          console.log("dimension " + dimension);
-          console.log("weight " + weight);
-        });
+      axios.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
 
-      } else {
-        // div.detailBullets_feature_div
-        // productDetails_techSpec_section_1
-        // td.bucket.content
-        console.log("else found " + $("table#productDetails_detailBullets_sections1").length);
-        $("table#productDetails_detailBullets_sections1").each(function (i, element) {
-          var dimension = $(this)
-            .find("td").eq(0)
-            .html().trim();
-          var weight = $(this)
-            .find("td").eq(1)
-            .html().trim();
-          console.log("dimension " + dimension);
-          console.log("weight " + weight);
-        });
+        const $ = cheerio.load(response.data);
+        for (let i = 0; i < detailTags.length; i++) {
+          let numRec = $(detailTags[i]).length;
+          if (numRec > 0) {
+            let sdim = "", weight = "", lable = "";
+            $(detailTags[i]).each(function (i, element) {
+              switch ($(this).children().get(0).name) {
+                case "tbody":
+                  $(this).find('tr').each(function (index, element) {
+                    label = $(element).find("th").text().trim();
+                    switch (label) {
+                      case "Product Dimensions":
+                      case "Package Dimensions":
+                        sdim = $(element).find("td").text().trim();
+                        break;
+                      case "Item Weight":
+                      case "Shipping Weight":
+                        weight = $(element).find("td").text().trim();
+                        break;
+                    }
+                    if (weight && sdim) {
+                      return false;
+                    }
+                  });
+                  break;
+                case "ul":
+                  $(this).find('li').each(function (index, element) {
+                    var item = $(element).text().split(":");
+                    label = item[0].trim();
+                    switch (label) {
+                      case "Product Dimensions":
+                      case "Package Dimensions":
+                        sdim = item[1].trim();
+                        break;
+                      case "Item Weight":
+                      case "Shipping Weight":
+                        weight = item[1].trim();
+                        break;
+                    }
+                    if (weight && sdim) {
+                      return false;
+                    }
+                  });
+                  break;
+              }
+            });
+            console.log(x + " " + idList[x] + " weight:" + weight + " , dimension: " + sdim);
+            if (weight && sdim) {
+              var shippingInfo = {
+                id: idList[x],
+                weight: weight.split("(")[0].trim(),
+                dimension: sdim.split("inch")[0].trim()
+              };
+              shippingInfoArr.push(shippingInfo);
+            }
+            numCompleted++;
+            if (numCompleted === idList.length) {
+              console.log("obtain all shipping info");
+              for (let j = 0; j < shippingInfoArr.length; j++) {
+                console.log(shippingInfoArr[j]);
+                db.Product.findOneAndUpdate(
+                  { id: shippingInfoArr[j].id },
+                  {
+                    $set: {
+                      weight: shippingInfoArr[j].weight,
+                      dimension: shippingInfoArr[j].dimension
+                    }
+                  }
+                )
+                  .then((dbUpdate) => {
+                    // If the User was updated successfully, send it back to the client
+                    console.log("update success " + dbUpdate);
 
-      }
-    });
-    // .catch(err => {
-    //   console.log(err);
-    // });
+                  })
+              }
+
+              // db.Article.findOneAndUpdate({ _id: req.params.id }, { $set: req.body })
+
+              res.json(shippingInfoArr);
+            }
+
+            break;
+          }
+
+        }
+      })
+      // .catch(err => {
+      //   console.log(err);
+      // });
+    }
 
   },
   scrape: function (req, res) {
@@ -157,6 +237,5 @@ module.exports = {
     .then(dbProduct => dbProduct.remove())
     .then(dbProduct => res.json(dbProduct))
     .catch(err => res.status(422).json(err));
-
   }
 };
