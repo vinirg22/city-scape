@@ -9,21 +9,27 @@ const ProductSchema = new Schema({
     id: {
         type: String,
         required: true,
-        trim: true
+        unique: true
     },
     title: {
         type: String,
         required: true,
         trim: true
     },
-    basePrice: {
-        type: Number
-      
-    },
     price: {
         type: String,
         required: true
     },
+    
+    weight: {
+        type: String,
+        default: ""
+    },
+    dimension: {
+        type: String,
+        default: ""
+    },
+    
     sellingPrice: {
         type: Number
        
