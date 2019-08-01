@@ -1,8 +1,8 @@
-
-// import {Navbar} from 'react-bootstrap';
+import { Navbar as BootstrapNavBar, Nav } from 'react-bootstrap'
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import AuthService from '../AuthService';
+
 
 class Navbar extends Component {
     constructor() {
@@ -65,41 +65,40 @@ class Navbar extends Component {
 
     render() {
         return (
+            <div>
 
-            <nav className="main-menu">
-                <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <li>
+                <nav className="main-menu">
+                    <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
+                        <li>
                         <Link className="nav-link" to="/">
-                            <i className="fa fa-home fa-2x"></i>
-                            <span className="nav-text">
-                                Home
+                        <img class="logo-center"src="/images/logo-crm-trns.png" alt="Girl in a jacket" width="60" height="60"></img>
+                        </Link>
+                        </li>
+                        <br></br>
+                        <li>
+                            <Link className="nav-link" to="/">
+                                <i className="fa fa-home fa-2x"></i>
+                                <span className="nav-text">
+                                    Home
                         </span>
-                        </Link>
+                            </Link>
 
-                    </li>
-                    <li className="has-subnav">
-                        <Link className="nav-link" to="/about">
-                            <i className="fa fa-laptop fa-2x"></i>
-                            <span className="nav-text">
-                                About
+                        </li>
+                        <li className="has-subnav">
+                            <Link className="nav-link" to="/about">
+                                <i className="fa fa-laptop fa-2x"></i>
+                                <span className="nav-text">
+                                    About
                         </span>
-                        </Link>
+                            </Link>
 
-                    </li>
-                    {this.showNavigation()}
+                        </li>
+                        {this.showNavigation()}
+                    </ul>
 
-                    <li>
-                        <br />
-                        <br />
-                        <Link className="nav-link" to="/">
-                            <img src="./images/logotr.png" className="center logo" alt="logo" width="60" height="60"></img>
-                        </Link>
-                    </li>
-                </ul>
-
-                <ul className="logout">
-                    {this.showLogout()}
-                    {/* <li>
+                    <ul className="logout">
+                        {this.showLogout()}
+                        {/* <li>
                         <Link className="nav-link" to="/" onClick={() => this.Auth.logout()}>
                             <i className="fa fa-power-off fa-2x"></i>
                             <span className="nav-text">
@@ -107,9 +106,26 @@ class Navbar extends Component {
                         </span>
                         </Link>
                     </li> */}
-                </ul>
-            </nav>
+                    </ul>
+                </nav>
 
+                {/* MOBILE MENU */}
+
+                <BootstrapNavBar className="mobNav" collapseOnSelect expand="lg" bg="dark" variant="dark">
+                    <BootstrapNavBar.Brand href="#home">E-merge</BootstrapNavBar.Brand>
+                    <BootstrapNavBar.Toggle aria-controls="responsive-navbar-nav" />
+                    <BootstrapNavBar.Collapse id="responsive-navbar-nav">
+                        <Nav className="mr-auto">
+                            <Nav.Link href="/">Home</Nav.Link>
+                            <Nav.Link href="/about">About</Nav.Link>
+                            <Nav.Link href="/profile">My page</Nav.Link>
+                            <Nav.Link href="/login">Login</Nav.Link>
+                            <Nav.Link href="/signup">Signup</Nav.Link>
+                            <Nav.Link href="/logout">Logout</Nav.Link>
+                        </Nav>
+                    </BootstrapNavBar.Collapse>
+                </BootstrapNavBar>
+            </div>
         )
     }
 }

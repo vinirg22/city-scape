@@ -217,7 +217,13 @@ module.exports = {
   },
 
   saveProduct: function (req, res) {
+<<<<<<< HEAD
     db.Product.create(req.body)
+=======
+    console.log(req.body);
+    db.Product
+      .create(req.body)
+>>>>>>> e6319fb8c157b9b45734c8dca961c475c0d41766
       .then(data => res.json(data))
       .catch(err => res.status(400).json(err));
   },
@@ -225,12 +231,25 @@ module.exports = {
   findProduct: function (req, res) {
     db.Product
       .find(req.query)
+<<<<<<< HEAD
       .then(dbModel => res.json(dbModel))
+=======
+      .then(dbProduct => res.json(dbProduct))
+>>>>>>> e6319fb8c157b9b45734c8dca961c475c0d41766
       .catch(err => res.status(422).json(err));
   },
 
   deleteProduct: function (req, res) {
+    db.Product
+    .findById({ id: req.params.id })
+    .then(dbProduct => dbProduct.remove())
+    .then(dbProduct => res.json(dbProduct))
+    .catch(err => res.status(422).json(err));
 
+<<<<<<< HEAD
   },
 
+=======
+  }
+>>>>>>> e6319fb8c157b9b45734c8dca961c475c0d41766
 };

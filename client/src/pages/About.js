@@ -2,6 +2,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import React, { Component } from 'react';
 import '../App.css';
 
+
+
 class About extends Component {
 
     render() {
@@ -13,7 +15,7 @@ class About extends Component {
                     {/* <!-- section title --> */}
                     <div className="title text-center">
                         <h2>About Our Project</h2>
-                        <p>The idea is to create a website for ecommerce sellers to find out the current product price and figure out whether it would be a profitable idea to sell that specific product after taking into consideration the shipping cost and wholesale price. E-zdig is a platform to help beginner and experienced ecommerce companies and individuals to discover the right product. You can save time by locating goods and calculating profits in one place. </p>
+                        <p>The idea is to create a website for ecommerce sellers to find out the current product price and figure out whether it would be a profitable idea to sell that specific product after taking into consideration the shipping cost and wholesale price. E-merge is a platform to help beginner and experienced ecommerce companies and individuals to discover the right product. You can save time by locating goods and calculating profits in one place. </p>
                         <div className="border"></div>
                         <h4>Contributors</h4>
                     </div>

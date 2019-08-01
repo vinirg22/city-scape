@@ -25,6 +25,7 @@ if(localStorage.getItem("id_token")) {
 
 ReactDOM.render(
     <Router>
+
             <Navbar />
         <div>
             <Route exact path="/" component={Home} />
