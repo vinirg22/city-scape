@@ -12,6 +12,13 @@ router.route("/scrape/:keyword")
 
 router.route("/scrapedetail/:id")
   .get(controller.scrapeDetail);
-  
-  // .delete(controller.remove);
+
+router.route("/")
+  .post(controller.saveProduct)
+  .get(controller.findProduct);
+
+router.route("/:id")
+  .delete(controller.deleteProduct);
+    
+// .delete(controller.remove);
 module.exports = router;

@@ -9,7 +9,7 @@ var parser = require('fast-xml-parser');
 var he = require('he');
 
 // Import the models to use its database functions.
-// const db = require("../models");
+const db = require("../models");
 
 function XMLtoJSON(xmlData) {
   var options = {
@@ -39,29 +39,29 @@ function XMLtoJSON(xmlData) {
 module.exports = {
 
   scrapeDetail: function (req, res) {
-    console.log("ScrapeDetail "+ req.params.id);
-    
+    console.log("ScrapeDetail " + req.params.id);
+
     // axios.get("https://www.amazon.com/dp/" + req.params.id).then((response) => {
     axios.get("https://www.amazon.com/dp/B07B9BNN24").then((response) => {
-    // axios.get("https://www.amazon.com/dp/B072LNQBZT").then((response) => {
-    // axios.get("https://www.amazon.com/dp/B002UT92EY").then((response) => {
+      // axios.get("https://www.amazon.com/dp/B072LNQBZT").then((response) => {
+      // axios.get("https://www.amazon.com/dp/B002UT92EY").then((response) => {
       const $ = cheerio.load(response.data);
 
       // Now, we grab every h2 within an article tag, and do the following:
       var numRec = $("td.bucket").length;
       console.log("rec found : " + numRec);
-      if (numRec===1) {
+      if (numRec === 1) {
         $("td.bucket").each(function (i, element) {
           var dimension = $(this)
-          .find("li").eq(0)
-          .html().trim();
+            .find("li").eq(0)
+            .html().trim();
           var weight = $(this)
-          .find("li").eq(1)
-          .html().trim();
+            .find("li").eq(1)
+            .html().trim();
           console.log("dimension " + dimension);
           console.log("weight " + weight);
         });
-        
+
       } else {
         // div.detailBullets_feature_div
         // productDetails_techSpec_section_1
@@ -69,20 +69,20 @@ module.exports = {
         console.log("else found " + $("table#productDetails_detailBullets_sections1").length);
         $("table#productDetails_detailBullets_sections1").each(function (i, element) {
           var dimension = $(this)
-          .find("td").eq(0)
-          .html().trim();
+            .find("td").eq(0)
+            .html().trim();
           var weight = $(this)
-          .find("td").eq(1)
-          .html().trim();
+            .find("td").eq(1)
+            .html().trim();
           console.log("dimension " + dimension);
           console.log("weight " + weight);
         });
-  
+
       }
     });
-      // .catch(err => {
-      //   console.log(err);
-      // });
+    // .catch(err => {
+    //   console.log(err);
+    // });
 
   },
   scrape: function (req, res) {
@@ -105,6 +105,9 @@ module.exports = {
       $("div.s-result-item").each(function (i, element) {
         // Save an empty result object
         const result = {};
+
+        result.id = $(this).
+          attr("data-asin");
 
         result.image = $(this)
           .find(".s-image")
@@ -131,5 +134,29 @@ module.exports = {
       .catch(err => {
         console.log(err);
       });
+  },
+
+  saveProduct: function (req, res) {
+    console.log(req.body);
+    db.Product
+      .create(req.body)
+      .then(data => res.json(data))
+      .catch(err => res.status(400).json(err));
+  },
+
+  findProduct: function (req, res) {
+    db.Product
+      .find(req.query)
+      .then(dbProduct => res.json(dbProduct))
+      .catch(err => res.status(422).json(err));
+  },
+
+  deleteProduct: function (req, res) {
+    db.Product
+    .findById({ id: req.params.id })
+    .then(dbProduct => dbProduct.remove())
+    .then(dbProduct => res.json(dbProduct))
+    .catch(err => res.status(422).json(err));
+
   }
 };
