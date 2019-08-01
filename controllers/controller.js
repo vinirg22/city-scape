@@ -138,18 +138,25 @@ module.exports = {
 
   saveProduct: function (req, res) {
     console.log(req.body);
-    db.Product.create(req.body)
+    db.Product
+      .create(req.body)
       .then(data => res.json(data))
       .catch(err => res.status(400).json(err));
   },
 
   findProduct: function (req, res) {
-
+    db.Product
+      .find(req.query)
+      .then(dbProduct => res.json(dbProduct))
+      .catch(err => res.status(422).json(err));
   },
 
   deleteProduct: function (req, res) {
+    db.Product
+    .findById({ id: req.params.id })
+    .then(dbProduct => dbProduct.remove())
+    .then(dbProduct => res.json(dbProduct))
+    .catch(err => res.status(422).json(err));
 
-  },
-
-
+  }
 };
