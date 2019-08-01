@@ -102,7 +102,6 @@ class Profile extends Component {
         <p>Welcome: {this.state.username}</p>
         <Link to="/">Go home</Link>
 
-<<<<<<< HEAD
         <div className="container mx-3">
           <div className="card">
             <div className="card-header myproduct-header clearfix">
@@ -138,25 +137,6 @@ class Profile extends Component {
           </div>
         </div>
       </div>
-=======
-        
-              <form action="/action_page.php">
-                Product Cost<br />
-                <input id="first" type="number" name="cost" /><br />
-                Shipping Cost<br />
-                <input id="second" type="number" name="shipping" /><br />
-                Current Price<br />
-                <input id="third" type="number" name="price" /><br />Possible Profit<br />
-                
-                <input id="result" type="number" name="result" /><br /><br />
-                <button onClick={this.calc}>Result</button>
-              </form>
-            </div>
-          
-      
-
-
->>>>>>> e6319fb8c157b9b45734c8dca961c475c0d41766
     )
   }
 }
