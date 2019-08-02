@@ -258,10 +258,24 @@ module.exports = {
   },
 
   deleteProduct: function (req, res) {
-    db.Product
-      .findById({ id: req.params.id })
-      .then(dbProduct => dbProduct.remove())
-      .then(dbProduct => res.json(dbProduct))
-      .catch(err => res.status(422).json(err));
+    console.log("In controller deleteProduct: " + JSON.stringify(req.params));
+    console.log("req.params.id: " + req.params.id);
+  //   db.Product.findByIdAndRemove(req.params.id, function (err,product){
+  //     if(err) { throw err; }
+  //     console.log("Success: " + product);
+  //     res.json(product);
+  // });
+  db.Product.findOne({id: req.params.id}, function (err,product){
+    if(err) { throw err; }
+    console.log("Product found, now removing: " + product);
+    product.remove();
+    console.log("Product removed");
+    res.json(product);
+});
+    // db.Product
+    //   .findById({ id: req.params.id })
+    //   .then(dbProduct => dbProduct.remove())
+    //   .then(dbProduct => res.json(dbProduct))
+    //   .catch(err => res.status(422).json(err));
   }
 };
