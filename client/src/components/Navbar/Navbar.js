@@ -25,7 +25,7 @@ class Navbar extends Component {
             );
         } else {
             return ([
-                <li className="has-subnav">
+                <li className="has-subnav" key="1111">
                     <Link className="nav-link" to="/Login">
                         <i className="fa fa-sign-in"></i>
                         <span className="nav-text">
@@ -34,7 +34,7 @@ class Navbar extends Component {
                     </Link>
 
                 </li>,
-                <li className="has-subnav">
+                <li className="has-subnav" key="2222">
                     <Link className="nav-link" to="/Signup">
                         <i className="fa fa-sign-out fa-lg"></i>
                         <span className="nav-text">
@@ -49,7 +49,6 @@ class Navbar extends Component {
 
     showLogout = () => {
         if (this.Auth.loggedIn()) {
-
             return (
                 <li>
                     <Link className="nav-link" to="/" onClick={() => this.Auth.logout()}>
@@ -63,6 +62,21 @@ class Navbar extends Component {
         }
     }
 
+    showNavigationMob = () => {
+        if (this.Auth.loggedIn()) {
+            return ([
+                <Nav.Link href="/profile" key="5555" >My page</Nav.Link>,
+                <Nav.Link href="/logout" key="6666">Logout</Nav.Link>
+            ])
+        } else {
+            return ([
+                <Nav.Link href="/login" key="3333">Login</Nav.Link>,
+                <Nav.Link href="/signup" key="4444">Signup</Nav.Link>
+            ]);
+        }
+    }
+
+
     render() {
         return (
             <div>
@@ -70,9 +84,15 @@ class Navbar extends Component {
                 <nav className="main-menu">
                     <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
                         <li>
+<<<<<<< HEAD
                         <Link className="nav-link" to="/">
                         <img className="logo-center"src="/images/logo-crm-trns.png" alt="Girl in a jacket" width="60" height="60"></img>
                         </Link>
+=======
+                            <Link className="nav-link" to="/">
+                                <img className="logo-center" src="/images/logo-crm-trns.png" alt="Girl in a jacket" width="60" height="60"></img>
+                            </Link>
+>>>>>>> 31ca01ac5ca3752e79d036da085bc7bb9e6f275c
                         </li>
                         <br></br>
                         <li>
@@ -98,14 +118,6 @@ class Navbar extends Component {
 
                     <ul className="logout">
                         {this.showLogout()}
-                        {/* <li>
-                        <Link className="nav-link" to="/" onClick={() => this.Auth.logout()}>
-                            <i className="fa fa-power-off fa-2x"></i>
-                            <span className="nav-text">
-                                Logout
-                        </span>
-                        </Link>
-                    </li> */}
                     </ul>
                 </nav>
 
@@ -118,10 +130,12 @@ class Navbar extends Component {
                         <Nav className="mr-auto">
                             <Nav.Link href="/">Home</Nav.Link>
                             <Nav.Link href="/about">About</Nav.Link>
-                            <Nav.Link href="/profile">My page</Nav.Link>
+                            {this.showNavigationMob()}
+                            {/* <Nav.Link href="/profile">My page</Nav.Link>
+
                             <Nav.Link href="/login">Login</Nav.Link>
                             <Nav.Link href="/signup">Signup</Nav.Link>
-                            <Nav.Link href="/logout">Logout</Nav.Link>
+                            <Nav.Link href="/logout">Logout</Nav.Link> */}
                         </Nav>
                     </BootstrapNavBar.Collapse>
                 </BootstrapNavBar>
