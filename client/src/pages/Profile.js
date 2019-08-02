@@ -23,18 +23,18 @@ class Profile extends Component {
         username: res.data.username,
       })
     });
-    var data = localStorage.getItem("productList");
-    if (data === null) {
-      return;
-    }
-    var pList = JSON.parse(data);
+
     API.getProduct()
       .then(res => {
-        for (let x = 0; x < pList.length; x++) {
-          for (let i = 0; i < res.data.length; i++) {
-            if (res.data[i].id === pList[x].id) {
-              res.data[i].check = true;
-              break;
+        var data = localStorage.getItem("productList");
+        if (data) {
+          var pList = JSON.parse(data);
+          for (let x = 0; x < pList.length; x++) {
+            for (let i = 0; i < res.data.length; i++) {
+              if (res.data[i].id === pList[x].id) {
+                res.data[i].check = true;
+                break;
+              }
             }
           }
         }
@@ -89,7 +89,7 @@ class Profile extends Component {
         }
         console.log(".........");
 
-        this.setState({ myProducts: tempProd , modalShow: false });
+        this.setState({ myProducts: tempProd, modalShow: false });
         // this.setState({ myProducts: tempProd });
 
       })
