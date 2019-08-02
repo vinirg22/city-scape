@@ -1,0 +1,40 @@
+.sel-calc-container {
+    width : 100%;
+}
+
+.sel-product-container {
+    height: 80vh;
+
+    overflow-y : auto;
+    
+}
+
+.img-container {
+    border: 1px solid lightgray;
+    border-radius: 5px;
+}
+.img-selected {
+    border: 5px solid green;
+}
+
+.sel-product-img:hover {
+    border: 3px solid limegreen;
+}
+
+.card-shipping {
+    border-width: 0px;
+}
+
+.p-dimension {
+    width : 50px;
+    margin-right: 20px;
+}
+
+#shipping-error, #profit-error {
+    color: red;
+    font-weight: bold;
+}
+
+#result {
+    border: 3px solid darkgray;
+}
