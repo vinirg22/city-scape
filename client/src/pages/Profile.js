@@ -1,15 +1,20 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import React, { Component } from 'react';
 import withAuth from './../components/withAuth';
+// import Modal from '../components/Modal';
 import API from './../utils/API';
 import { Link } from 'react-router-dom';
 import "../style/Profile.css"
+
+import MyModal from '../components/Modal';
+
 
 class Profile extends Component {
 
   state = {
     username: "",
-    myProducts: []
+    myProducts: [],
+    modalShow: false
   };
 
   proceedArr = [];
@@ -46,30 +51,34 @@ class Profile extends Component {
   }
 
   obtainShippingInfo = () => {
+    console.log('obtain')
     const idList = this.state.myProducts.map(item => item.id);
     var productStr = idList.join("|");
 
     // products is a long string consists of all product id concatinated with |
     API.obtainShippingInfo(productStr)
-      .then((res) => {
-        console.log(res);
-        // check state.products with return data, if weight and dimension is available , show icon.
-        var tempProd = this.state.myProducts;
-
-        for (let i = 0; i < res.data.length; i++) {
-          for (let j = 0; j < tempProd.length; j++) {
-            if (tempProd[j].id === res.data[i].id) {
-              // found product
-              tempProd[j].weight = res.data[i].weight;
-              tempProd[j].dimension = res.data[i].dimension;
-              break;
-            }
+    .then((res) => {
+      console.log(res);
+      // check state.products with return data, if weight and dimension is available , show icon.
+      var tempProd = this.state.myProducts;
+      
+      for (let i = 0; i < res.data.length; i++) {
+        for (let j = 0; j < tempProd.length; j++) {
+          if (tempProd[j].id === res.data[i].id) {
+            // found product
+            tempProd[j].weight = res.data[i].weight;
+            tempProd[j].dimension = res.data[i].dimension;
+            break;
           }
-
         }
-
-        this.setState({ myProducts: tempProd });
-      })
+        
+      }
+      console.log(".........");
+      
+      this.setState({ myProducts: tempProd }, {modalShow: false});
+      
+    })
+    this.setState({modalShow: true}); 
   }
 
   renderShippingReady = (product) => {
@@ -84,23 +93,33 @@ class Profile extends Component {
     if (e.target.checked) {
       // add to array
       var myproducts = this.state.myProducts;
-      for (let i=0; i<myproducts.length;i++) {
-        if (id===myproducts[i].id) {
-          this.proceedArr.push( myproducts[i]);
+      for (let i = 0; i < myproducts.length; i++) {
+        if (id === myproducts[i].id) {
+          this.proceedArr.push(myproducts[i]);
           break;
         }
       }
     } else {
       // delete from array
-      this.proceedArr  = this.proceedArr.filter(item => id !== item.id);
+      this.proceedArr = this.proceedArr.filter(item => id !== item.id);
     }
   }
+
+  // removeProduct = (product, id) => {
+   
+  //     // API.removeProduct(id)
+  //     //   .then(res => this.removeProduct(product.id))
+  //     //   .catch(err => console.log(err));
+    
+  // }
+
+ 
 
   render() {
     return (
       <div className="container Profile">
         <p>Welcome: {this.state.username}</p>
-        <Link to="/">Go home</Link>
+        f   <Link to="/">Go home</Link>
 
         <div className="container mx-3">
           <div className="card">
@@ -109,9 +128,13 @@ class Profile extends Component {
               <button className="btn btn-success float-right ml-3" onClick={this.nextScreen}>
                 Proceed to Calculate Shipping/Profit
               </button>
-              <button className="btn btn-warning float-right" onClick={this.obtainShippingInfo}>
+
+              {/* <-- modal btn --> */}
+              <button className="btn btn-warning float-right" data-target="#myModal" onClick={this.obtainShippingInfo}>
                 Obtain Shipping information
               </button>
+
+
             </div>
             <div className="card-body">
               <div className="card-columns">
@@ -136,6 +159,14 @@ class Profile extends Component {
             </div>
           </div>
         </div>
+        
+         <MyModal
+        show={this.state.modalShow}
+        onHide={() => this.setState({modalShow: false})}
+        data = {this.state.myProducts}
+        backdrop = "static"
+        keyboard = {false}
+      />
       </div>
     )
   }
