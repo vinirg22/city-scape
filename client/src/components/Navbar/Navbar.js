@@ -84,15 +84,9 @@ class Navbar extends Component {
                 <nav className="main-menu">
                     <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
                         <li>
-<<<<<<< HEAD
-                        <Link className="nav-link" to="/">
-                        <img className="logo-center"src="/images/logo-crm-trns.png" alt="Girl in a jacket" width="60" height="60"></img>
-                        </Link>
-=======
                             <Link className="nav-link" to="/">
                                 <img className="logo-center" src="/images/logo-crm-trns.png" alt="Girl in a jacket" width="60" height="60"></img>
                             </Link>
->>>>>>> 31ca01ac5ca3752e79d036da085bc7bb9e6f275c
                         </li>
                         <br></br>
                         <li>

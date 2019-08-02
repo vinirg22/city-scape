@@ -70,7 +70,7 @@ class Home extends Component {
                         <h5>Products found...</h5>
                         <div className="card-columns">
                             {this.state.products.map(product => (
-                                <div className="card">
+                                <div className="card" key={product.id}>
                                     <img src={product.image} className="card-img-top product-img" alt="..." />
 
                                     <div className="card-body">
