@@ -1,15 +1,20 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import React, { Component } from 'react';
 import withAuth from './../components/withAuth';
+// import Modal from '../components/Modal';
 import API from './../utils/API';
 // import { Link } from 'react-router-dom';
 import "../style/Profile.css"
+
+import MyModal from '../components/Modal';
+
 
 class Profile extends Component {
 
   state = {
     username: "",
-    myProducts: []
+    myProducts: [],
+    modalShow: false
   };
 
   componentDidMount() {
@@ -41,7 +46,7 @@ class Profile extends Component {
     var products = this.state.myProducts;
 
     var proceedArr = [];
-    for(let i=0; i<products.length; i++) {
+    for (let i = 0; i < products.length; i++) {
       if (products[i].check) {
         proceedArr.push(products[i]);
       }
@@ -57,13 +62,13 @@ class Profile extends Component {
     var idList = [];
     var tempProd = this.state.myProducts;
 
-    for(let i=0; i<tempProd.length; i++) {
+    for (let i = 0; i < tempProd.length; i++) {
       if (!tempProd[i].weight || !tempProd[i].dimension) {
         console.log(tempProd[i].id + " got no info");
         idList.push(tempProd[i].id);
       }
     }
-    
+
     var productStr = idList.join("|");
     console.log(productStr);
 
@@ -81,11 +86,14 @@ class Profile extends Component {
               break;
             }
           }
-
         }
+        console.log(".........");
 
-        this.setState({ myProducts: tempProd });
+        this.setState({ myProducts: tempProd , modalShow: false });
+        // this.setState({ myProducts: tempProd });
+
       })
+    this.setState({ modalShow: true });
   }
 
   renderShippingReady = (product) => {
@@ -98,15 +106,25 @@ class Profile extends Component {
 
   handleCheckChange = (e, id) => {
 
-      var myproducts = this.state.myProducts;
-      for (let i = 0; i < myproducts.length; i++) {
-        if (id === myproducts[i].id) {
-          myproducts[i].check = e.target.checked;
-          this.setState( { myProducts: myproducts });
-          break;
-        }
+    var myproducts = this.state.myProducts;
+    for (let i = 0; i < myproducts.length; i++) {
+      if (id === myproducts[i].id) {
+        myproducts[i].check = e.target.checked;
+        this.setState({ myProducts: myproducts });
+        break;
       }
+    }
   }
+
+  // removeProduct = (product, id) => {
+
+  //     // API.removeProduct(id)
+  //     //   .then(res => this.removeProduct(product.id))
+  //     //   .catch(err => console.log(err));
+
+  // }
+
+
 
   render() {
     var prodStr = "My products (" + this.state.myProducts.length
@@ -122,9 +140,13 @@ class Profile extends Component {
               <button className="btn btn-success float-right ml-3" onClick={this.nextScreen}>
                 Proceed to Calculate Shipping/Profit
               </button>
-              <button className="btn btn-warning float-right" onClick={this.obtainShippingInfo}>
+
+              {/* <-- modal btn --> */}
+              <button className="btn btn-warning float-right" data-target="#myModal" onClick={this.obtainShippingInfo}>
                 Obtain Shipping information
               </button>
+
+
             </div>
             <div className="card-body">
               <div className="card-columns">
@@ -155,6 +177,14 @@ class Profile extends Component {
             </div>
           </div>
         </div>
+
+        <MyModal
+          show={this.state.modalShow}
+          onHide={() => this.setState({ modalShow: false })}
+          data={this.state.myProducts}
+          backdrop="static"
+          keyboard={false}
+        />
       </div>
     )
   }

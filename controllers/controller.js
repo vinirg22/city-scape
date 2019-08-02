@@ -46,22 +46,22 @@ const detailTags = [
 ];
 
 
-const USPS_URL="http://production.shippingapis.com/ShippingAPI.dll?API=RateV4&XML=";
-const USPS_HEAD= '<RateV4Request USERID="' + process.env.USPS_KEY + '">'
+const USPS_URL = "http://production.shippingapis.com/ShippingAPI.dll?API=RateV4&XML=";
+const USPS_HEAD = '<RateV4Request USERID="' + process.env.USPS_KEY + '">'
   + '<Revision>2</Revision><Package ID="1ST"><Service>PRIORITY</Service>'
   + '<FirstClassMailType>FLAT</FirstClassMailType>';
-const USPS_END="<Machinable>true</Machinable></Package></RateV4Request>";
+const USPS_END = "<Machinable>true</Machinable></Package></RateV4Request>";
 
 
 module.exports = {
   calcShipping: function (req, res) {
     var info = JSON.parse(req.params.info);
-    
+
     var url = USPS_URL + USPS_HEAD;
-    
+
     url += "<ZipOrigination>" + info.zipFrom + "</ZipOrigination>";
     url += "<ZipDestination>" + info.zipTo + "</ZipDestination>";
-    if (info.weightUnit==="pounds") {
+    if (info.weightUnit === "pounds") {
       url += "<Pounds>" + info.weight + "</Pounds>";
       url += "<Ounces>0</Ounces>";
     } else {
@@ -91,12 +91,14 @@ module.exports = {
     var numCompleted = 0;
     var shippingInfoArr = [];
     for (let x = 0; x < idList.length; x++) {
+      console.log(".... " + idList[x]);
 
       axios.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
 
         const $ = cheerio.load(response.data);
         for (let i = 0; i < detailTags.length; i++) {
           let numRec = $(detailTags[i]).length;
+          console.log(idList[x] + " " + numRec + " for " + i);
           if (numRec > 0) {
             let sdim = "", weight = "", lable = "";
             $(detailTags[i]).each(function (i, element) {
@@ -150,6 +152,7 @@ module.exports = {
               shippingInfoArr.push(shippingInfo);
             }
             numCompleted++;
+            // console.log("... "+ numCompleted + " - " + idList.length);
             if (numCompleted === idList.length) {
               console.log("obtain all shipping info");
               for (let j = 0; j < shippingInfoArr.length; j++) {
@@ -178,9 +181,14 @@ module.exports = {
 
         }
       })
-      // .catch(err => {
-      //   console.log(err);
-      // });
+        .catch(err => {
+          // console.log(err);
+          numCompleted++;
+          console.log(numCompleted + " " + idList.length);
+          if (numCompleted === idList.length) {
+            res.json(shippingInfoArr);
+          }
+        });
     }
 
   },
@@ -251,9 +259,9 @@ module.exports = {
 
   deleteProduct: function (req, res) {
     db.Product
-    .findById({ id: req.params.id })
-    .then(dbProduct => dbProduct.remove())
-    .then(dbProduct => res.json(dbProduct))
-    .catch(err => res.status(422).json(err));
+      .findById({ id: req.params.id })
+      .then(dbProduct => dbProduct.remove())
+      .then(dbProduct => res.json(dbProduct))
+      .catch(err => res.status(422).json(err));
   }
 };
