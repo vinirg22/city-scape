@@ -25,7 +25,7 @@ class Navbar extends Component {
             );
         } else {
             return ([
-                <li className="has-subnav">
+                <li className="has-subnav" key="1111">
                     <Link className="nav-link" to="/Login">
                         <i className="fa fa-sign-in"></i>
                         <span className="nav-text">
@@ -34,7 +34,7 @@ class Navbar extends Component {
                     </Link>
 
                 </li>,
-                <li className="has-subnav">
+                <li className="has-subnav" key="2222">
                     <Link className="nav-link" to="/Signup">
                         <i className="fa fa-sign-out fa-lg"></i>
                         <span className="nav-text">
@@ -65,13 +65,13 @@ class Navbar extends Component {
     showNavigationMob = () => {
         if (this.Auth.loggedIn()) {
             return ([
-                <Nav.Link href="/profile">My page</Nav.Link>,
-                <Nav.Link href="/logout">Logout</Nav.Link>
+                <Nav.Link href="/profile" key="5555" >My page</Nav.Link>,
+                <Nav.Link href="/logout" key="6666">Logout</Nav.Link>
             ])
         } else {
             return ([
-                <Nav.Link href="/login">Login</Nav.Link>,
-                <Nav.Link href="/signup">Signup</Nav.Link>
+                <Nav.Link href="/login" key="3333">Login</Nav.Link>,
+                <Nav.Link href="/signup" key="4444">Signup</Nav.Link>
             ]);
         }
     }
