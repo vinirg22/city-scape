@@ -33,7 +33,8 @@ function XMLtoJSON(xmlData) {
   console.log("XML valid : " + parser.validate(xmlData));
   var jsonObj = parser.parse(xmlData, options);
 
-  console.log(jsonObj.RateV4Response.Package.Postage.SpecialServices);
+  // console.log(jsonObj.RateV4Response.Package.Postage.SpecialServices);
+  return jsonObj;
 
 }
 
@@ -43,22 +44,42 @@ const detailTags = [
   "table#productDetails_detailBullets_sections1",
   "td.bucket .content"
 ];
-/*  B07DD3W154
-  B0779ZXQ9J
-  B01I9OFGR0
-  B07KX7BP43
-  B07B9BNN24
-  B072LNQBZT
-  B01I9OED06
-  B002UT92EY */
+
+
+const USPS_URL="http://production.shippingapis.com/ShippingAPI.dll?API=RateV4&XML=";
+const USPS_HEAD= '<RateV4Request USERID="' + process.env.USPS_KEY + '">'
+  + '<Revision>2</Revision><Package ID="1ST"><Service>PRIORITY</Service>'
+  + '<FirstClassMailType>FLAT</FirstClassMailType>';
+const USPS_END="<Machinable>true</Machinable></Package></RateV4Request>";
+
 
 module.exports = {
+  calcShipping: function (req, res) {
+    var info = JSON.parse(req.params.info);
+    
+    var url = USPS_URL + USPS_HEAD;
+    
+    url += "<ZipOrigination>" + info.zipFrom + "</ZipOrigination>";
+    url += "<ZipDestination>" + info.zipTo + "</ZipDestination>";
+    if (info.weightUnit==="pounds") {
+      url += "<Pounds>" + info.weight + "</Pounds>";
+      url += "<Ounces>0</Ounces>";
+    } else {
+      url += "<Pounds>0</Pounds>";
+      url += "<Ounces>" + info.weight + "</Ounces>";
+    }
+    url += "<Container/><Size>REGULAR</Size>";
+    url += "<Width>" + info.dimWidth + "</Width>";
+    url += "<Length>" + info.dimLength + "</Length>";
+    url += "<Height>" + info.dimHeight + "</Height>";
+    url += USPS_END;
 
-  getLegitWeight: function (weightStr) {
-    return weightStr.split("(")[0].trim();
-
-  },
-  getLegitDimension: function (dimStr) {
+    axios.get(url)
+      .then(shippingRes => {
+        var info = XMLtoJSON(shippingRes.data);
+        res.json(info.RateV4Response.Package.Postage.Rate)
+      })
+      .catch(err => res.status(422).json(err));
 
   },
 
@@ -149,8 +170,6 @@ module.exports = {
                   })
               }
 
-              // db.Article.findOneAndUpdate({ _id: req.params.id }, { $set: req.body })
-
               res.json(shippingInfoArr);
             }
 
@@ -169,7 +188,6 @@ module.exports = {
     // A GET route for scraping the echoJS website
     // First, we grab the body of the html with axios
 
-    // XMLtoJSON();
     console.log(req.params.id);
 
     // axios.get("https://www.amazon.com/s?k=bluetooth+speaker").then((response) => {
