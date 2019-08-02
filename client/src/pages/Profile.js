@@ -38,6 +38,8 @@ class Profile extends Component {
             }
           }
         }
+        console.log("profile page getting data done..")
+        console.log(res.data);
         this.setState({ myProducts: res.data });
       });
   }
