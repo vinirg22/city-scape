@@ -1,18 +1,21 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import React, { Component } from 'react';
 import withAuth from './../components/withAuth';
+// import Modal from '../components/Modal';
 import API from './../utils/API';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import "../style/Profile.css"
+
+import MyModal from '../components/Modal';
+
 
 class Profile extends Component {
 
   state = {
     username: "",
-    myProducts: []
+    myProducts: [],
+    modalShow: false
   };
-
-  proceedArr = [];
 
   componentDidMount() {
     API.getUser(this.props.user.id).then(res => {
@@ -20,41 +23,59 @@ class Profile extends Component {
         username: res.data.username,
       })
     });
+    var data = localStorage.getItem("productList");
+    if (data === null) {
+      return;
+    }
+    var pList = JSON.parse(data);
     API.getProduct()
       .then(res => {
+        for (let x = 0; x < pList.length; x++) {
+          for (let i = 0; i < res.data.length; i++) {
+            if (res.data[i].id === pList[x].id) {
+              res.data[i].check = true;
+              break;
+            }
+          }
+        }
         this.setState({ myProducts: res.data });
       });
   }
 
-  function
-  calc(event) {
-
-    var x = Number(document.getElementById("first").value)
-    var y = Number(document.getElementById("second").value)
-    var z = Number(document.getElementById("third").value)
-    var r = x + y - z;
-    console.log(x + " " + y + " " + z);
-    document.getElementById("result").value = r;
-    event.preventDefault()
-  }
-
   nextScreen = () => {
+    var products = this.state.myProducts;
+
+    var proceedArr = [];
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].check) {
+        proceedArr.push(products[i]);
+      }
+    }
     // save to local storage
-    localStorage.clear();
-    localStorage.setItem("productList", JSON.stringify(this.proceedArr));
+    localStorage.setItem("productList", JSON.stringify(proceedArr));
     this.props.history.replace('/summary')
   }
 
   obtainShippingInfo = () => {
-    const idList = this.state.myProducts.map(item => item.id);
+
+    // if products already have shipping info, skip them.
+    var idList = [];
+    var tempProd = this.state.myProducts;
+
+    for (let i = 0; i < tempProd.length; i++) {
+      if (!tempProd[i].weight || !tempProd[i].dimension) {
+        console.log(tempProd[i].id + " got no info");
+        idList.push(tempProd[i].id);
+      }
+    }
+
     var productStr = idList.join("|");
+    console.log(productStr);
 
     // products is a long string consists of all product id concatinated with |
     API.obtainShippingInfo(productStr)
       .then((res) => {
-        console.log(res);
         // check state.products with return data, if weight and dimension is available , show icon.
-        var tempProd = this.state.myProducts;
 
         for (let i = 0; i < res.data.length; i++) {
           for (let j = 0; j < tempProd.length; j++) {
@@ -65,11 +86,14 @@ class Profile extends Component {
               break;
             }
           }
-
         }
+        console.log(".........");
 
-        this.setState({ myProducts: tempProd });
+        this.setState({ myProducts: tempProd , modalShow: false });
+        // this.setState({ myProducts: tempProd });
+
       })
+    this.setState({ modalShow: true });
   }
 
   renderShippingReady = (product) => {
@@ -81,37 +105,48 @@ class Profile extends Component {
   }
 
   handleCheckChange = (e, id) => {
-    if (e.target.checked) {
-      // add to array
-      var myproducts = this.state.myProducts;
-      for (let i=0; i<myproducts.length;i++) {
-        if (id===myproducts[i].id) {
-          this.proceedArr.push( myproducts[i]);
-          break;
-        }
+
+    var myproducts = this.state.myProducts;
+    for (let i = 0; i < myproducts.length; i++) {
+      if (id === myproducts[i].id) {
+        myproducts[i].check = e.target.checked;
+        this.setState({ myProducts: myproducts });
+        break;
       }
-    } else {
-      // delete from array
-      this.proceedArr  = this.proceedArr.filter(item => id !== item.id);
     }
   }
 
+  // removeProduct = (product, id) => {
+
+  //     // API.removeProduct(id)
+  //     //   .then(res => this.removeProduct(product.id))
+  //     //   .catch(err => console.log(err));
+
+  // }
+
+
+
   render() {
+    var prodStr = "My products (" + this.state.myProducts.length
+      + (this.state.myProducts.length > 1 ? " items)" : " item)");
     return (
       <div className="container Profile">
         <p>Welcome: {this.state.username}</p>
-        <Link to="/">Go home</Link>
 
         <div className="container mx-3">
           <div className="card">
             <div className="card-header myproduct-header clearfix">
-              My products
+              {prodStr}
               <button className="btn btn-success float-right ml-3" onClick={this.nextScreen}>
                 Proceed to Calculate Shipping/Profit
               </button>
-              <button className="btn btn-warning float-right" onClick={this.obtainShippingInfo}>
+
+              {/* <-- modal btn --> */}
+              <button className="btn btn-warning float-right" data-target="#myModal" onClick={this.obtainShippingInfo}>
                 Obtain Shipping information
               </button>
+
+
             </div>
             <div className="card-body">
               <div className="card-columns">
@@ -127,7 +162,13 @@ class Profile extends Component {
                         <button className="btn-remove float-right" onClick={() => this.removeProduct(product.id)}>Remove</button>
                       </div>
                       <div className="checkbox-focus pl-2">
-                        <input type="checkbox" name="item-focus" value="Bike" onChange={(e) => this.handleCheckChange(e, product.id)} /> Select to proceed.
+                        <input
+                          type="checkbox"
+                          name="item-focus"
+                          value="Bike"
+                          checked={product.check}
+                          onChange={(e) => this.handleCheckChange(e, product.id)}
+                        /> Select to proceed.
                       </div>
                     </div>
                   </div>
@@ -136,6 +177,14 @@ class Profile extends Component {
             </div>
           </div>
         </div>
+
+        <MyModal
+          show={this.state.modalShow}
+          onHide={() => this.setState({ modalShow: false })}
+          data={this.state.myProducts}
+          backdrop="static"
+          keyboard={false}
+        />
       </div>
     )
   }

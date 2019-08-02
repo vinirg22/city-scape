@@ -10,6 +10,10 @@ export default {
     return axios.get(`/api/products/scrapeDetail/${products}`);
   },
 
+  obtainShippingCost: (info) => {
+    return axios.get(`/api/products/shipping/${info}`);
+  },
+
   getUser: (id) => {
     return axios.get(`/api/user/${id}`);
   },
