@@ -116,13 +116,14 @@ class Profile extends Component {
     }
   }
 
-  // removeProduct = (product, id) => {
-
-  //     // API.removeProduct(id)
-  //     //   .then(res => this.removeProduct(product.id))
-  //     //   .catch(err => console.log(err));
-
-  // }
+   removeProduct = (id) => {
+     console.log("Removing product in Profile.js...");
+    API.removeProduct(id)
+      .then(res => {
+        console.log("Product removed");
+      })
+      .catch(err => console.log(err));
+  }
 
 
 

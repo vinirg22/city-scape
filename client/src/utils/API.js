@@ -28,6 +28,12 @@ export default {
 
   getProduct: () => {
     return axios.get('api/products/');
+  },
+
+  removeProduct: (id) => {
+    console.log("Removing product in API.js");
+    return axios.delete('api/products/' + id);
   }
+ 
 };
 
