@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 // Commenting out in the meantime. Will be adding to routes file. ******
 const routes = require("./routes");
 
-app.use(routes);
+
 
 mongoose
   .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/emergeDB', {useNewUrlParser: true, useCreateIndex: true})
@@ -56,6 +56,8 @@ if (process.env.NODE_ENV === "production") {
 //   res.send('You are authenticated'); //Sending some response when authenticated
 // });
 
+app.use(routes);
+
 // Error handling
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') { // Send the error rather than to show it on the console
@@ -65,6 +67,9 @@ app.use(function (err, req, res, next) {
     next(err);
   }
 });
+
+
+
 
 // Send every request to the React app
 // Define any API routes before this runs
