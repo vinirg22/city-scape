@@ -129,6 +129,7 @@ module.exports = {
               shippingInfoArr.push(shippingInfo);
             }
             numCompleted++;
+            // console.log("... "+ numCompleted + " - " + idList.length);
             if (numCompleted === idList.length) {
               console.log("obtain all shipping info");
               for (let j = 0; j < shippingInfoArr.length; j++) {
@@ -140,7 +141,7 @@ module.exports = {
                       weight: shippingInfoArr[j].weight,
                       dimension: shippingInfoArr[j].dimension
                     }
-                  }
+                  } 
                 )
                   .then((dbUpdate) => {
                     // If the User was updated successfully, send it back to the client
