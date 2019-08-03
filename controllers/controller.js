@@ -33,7 +33,8 @@ function XMLtoJSON(xmlData) {
   console.log("XML valid : " + parser.validate(xmlData));
   var jsonObj = parser.parse(xmlData, options);
 
-  console.log(jsonObj.RateV4Response.Package.Postage.SpecialServices);
+  // console.log(jsonObj.RateV4Response.Package.Postage.SpecialServices);
+  return jsonObj;
 
 }
 
@@ -43,22 +44,42 @@ const detailTags = [
   "table#productDetails_detailBullets_sections1",
   "td.bucket .content"
 ];
-/*  B07DD3W154
-  B0779ZXQ9J
-  B01I9OFGR0
-  B07KX7BP43
-  B07B9BNN24
-  B072LNQBZT
-  B01I9OED06
-  B002UT92EY */
+
+
+const USPS_URL = "http://production.shippingapis.com/ShippingAPI.dll?API=RateV4&XML=";
+const USPS_HEAD = '<RateV4Request USERID="' + process.env.USPS_KEY + '">'
+  + '<Revision>2</Revision><Package ID="1ST"><Service>PRIORITY</Service>'
+  + '<FirstClassMailType>FLAT</FirstClassMailType>';
+const USPS_END = "<Machinable>true</Machinable></Package></RateV4Request>";
+
 
 module.exports = {
+  calcShipping: function (req, res) {
+    var info = JSON.parse(req.params.info);
 
-  getLegitWeight: function (weightStr) {
-    return weightStr.split("(")[0].trim();
+    var url = USPS_URL + USPS_HEAD;
 
-  },
-  getLegitDimension: function (dimStr) {
+    url += "<ZipOrigination>" + info.zipFrom + "</ZipOrigination>";
+    url += "<ZipDestination>" + info.zipTo + "</ZipDestination>";
+    if (info.weightUnit === "pounds") {
+      url += "<Pounds>" + info.weight + "</Pounds>";
+      url += "<Ounces>0</Ounces>";
+    } else {
+      url += "<Pounds>0</Pounds>";
+      url += "<Ounces>" + info.weight + "</Ounces>";
+    }
+    url += "<Container/><Size>REGULAR</Size>";
+    url += "<Width>" + info.dimWidth + "</Width>";
+    url += "<Length>" + info.dimLength + "</Length>";
+    url += "<Height>" + info.dimHeight + "</Height>";
+    url += USPS_END;
+
+    axios.get(url)
+      .then(shippingRes => {
+        var info = XMLtoJSON(shippingRes.data);
+        res.json(info.RateV4Response.Package.Postage.Rate)
+      })
+      .catch(err => res.status(422).json(err));
 
   },
 
@@ -70,12 +91,14 @@ module.exports = {
     var numCompleted = 0;
     var shippingInfoArr = [];
     for (let x = 0; x < idList.length; x++) {
+      console.log(".... " + idList[x]);
 
       axios.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
 
         const $ = cheerio.load(response.data);
         for (let i = 0; i < detailTags.length; i++) {
           let numRec = $(detailTags[i]).length;
+          console.log(idList[x] + " " + numRec + " for " + i);
           if (numRec > 0) {
             let sdim = "", weight = "", lable = "";
             $(detailTags[i]).each(function (i, element) {
@@ -129,6 +152,7 @@ module.exports = {
               shippingInfoArr.push(shippingInfo);
             }
             numCompleted++;
+            // console.log("... "+ numCompleted + " - " + idList.length);
             if (numCompleted === idList.length) {
               console.log("obtain all shipping info");
               for (let j = 0; j < shippingInfoArr.length; j++) {
@@ -149,8 +173,6 @@ module.exports = {
                   })
               }
 
-              // db.Article.findOneAndUpdate({ _id: req.params.id }, { $set: req.body })
-
               res.json(shippingInfoArr);
             }
 
@@ -159,9 +181,14 @@ module.exports = {
 
         }
       })
-      // .catch(err => {
-      //   console.log(err);
-      // });
+        .catch(err => {
+          // console.log(err);
+          numCompleted++;
+          console.log(numCompleted + " " + idList.length);
+          if (numCompleted === idList.length) {
+            res.json(shippingInfoArr);
+          }
+        });
     }
 
   },
@@ -169,7 +196,6 @@ module.exports = {
     // A GET route for scraping the echoJS website
     // First, we grab the body of the html with axios
 
-    // XMLtoJSON();
     console.log(req.params.id);
 
     // axios.get("https://www.amazon.com/s?k=bluetooth+speaker").then((response) => {
@@ -232,10 +258,24 @@ module.exports = {
   },
 
   deleteProduct: function (req, res) {
-    db.Product
-    .findById({ id: req.params.id })
-    .then(dbProduct => dbProduct.remove())
-    .then(dbProduct => res.json(dbProduct))
-    .catch(err => res.status(422).json(err));
+    console.log("In controller deleteProduct: " + JSON.stringify(req.params));
+    console.log("req.params.id: " + req.params.id);
+  //   db.Product.findByIdAndRemove(req.params.id, function (err,product){
+  //     if(err) { throw err; }
+  //     console.log("Success: " + product);
+  //     res.json(product);
+  // });
+  db.Product.findOne({id: req.params.id}, function (err,product){
+    if(err) { throw err; }
+    console.log("Product found, now removing: " + product);
+    product.remove();
+    console.log("Product removed");
+    res.json(product);
+});
+    // db.Product
+    //   .findById({ id: req.params.id })
+    //   .then(dbProduct => dbProduct.remove())
+    //   .then(dbProduct => res.json(dbProduct))
+    //   .catch(err => res.status(422).json(err));
   }
 };

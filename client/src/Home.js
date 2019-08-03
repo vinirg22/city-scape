@@ -27,7 +27,27 @@ class Home extends Component {
                 console.log(res.data.length);
                 console.log(res.data);
 
+<<<<<<< HEAD
                 this.setState({ products: res.data, keyword: "" });
+=======
+                // check if duplicate items
+                var uItems = [];
+                for(let i=0; i<res.data.length-1; i++) {
+                    var found = false;
+                    for(let j=i+1; j<res.data.length; j++) {
+                        if (res.data[i].id === res.data[j].id) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        uItems.push(res.data[i]);
+                    }
+                }
+
+                this.setState({ products: uItems , keyword: "" });
+
+>>>>>>> cc3211e71d3bd26954ab512813502f204cde0bbc
                 // this.props.history.replace('/');
             })
             .catch(err => alert(err));
@@ -39,6 +59,7 @@ class Home extends Component {
         API.saveProduct(product)
             .then((res) => {
                 const products = this.state.products.filter(item => product.id !== item.id);
+<<<<<<< HEAD
                 this.setState({ products: products });
 
             })
@@ -58,6 +79,11 @@ componentDidUpdate(){
             left: 0,
             behavior: 'smooth'
         });
+=======
+
+                this.setState({ products: products });
+            })
+>>>>>>> cc3211e71d3bd26954ab512813502f204cde0bbc
     }
 
     render() {
@@ -86,9 +112,16 @@ componentDidUpdate(){
                 </div>
 
                 <div className="container search-result py-3">
+<<<<<<< HEAD
                     <div className="card-columns">
                         {this.state.products.map(product => (
                             <div className="card">
+=======
+                    <h5>Products found...</h5>
+                    <div className="card-columns">
+                        {this.state.products.map(product => (
+                            <div className="card" key={product.id}>
+>>>>>>> cc3211e71d3bd26954ab512813502f204cde0bbc
                                 <img src={product.image} className="card-img-top product-img" alt="..." />
 
                                 <div className="card-body">
