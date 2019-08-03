@@ -2,41 +2,16 @@ const express = require("express");
 // Our scraping tools
 // Axios is a promised-based http library, similar to jQuery's Ajax method
 // It works on the client and on the server
+const { ProxyCrawlAPI } = require('proxycrawl');
+const pcAPI = new ProxyCrawlAPI({ token: process.env.PROXY_TOKEN });
 const axios = require("axios");
 const cheerio = require("cheerio");
+const XMLParser = require("./XML");
 
-var parser = require('fast-xml-parser');
-var he = require('he');
+
 
 // Import the models to use its database functions.
 const db = require("../models");
-
-function XMLtoJSON(xmlData) {
-  var options = {
-    attributeNamePrefix: "@_",
-    attrNodeName: "attr", //default is 'false'
-    textNodeName: "#text",
-    ignoreAttributes: true,
-    ignoreNameSpace: false,
-    allowBooleanAttributes: false,
-    parseNodeValue: true,
-    parseAttributeValue: false,
-    trimValues: true,
-    cdataTagName: "__cdata", //default is 'false'
-    cdataPositionChar: "\\c",
-    localeRange: "", //To support non english character in tag/attribute values.
-    parseTrueNumberOnly: false,
-    attrValueProcessor: a => he.decode(a, { isAttributeValue: true }),//default is a=>a
-    tagValueProcessor: a => he.decode(a) //default is a=>a
-  };
-
-  console.log("XML valid : " + parser.validate(xmlData));
-  var jsonObj = parser.parse(xmlData, options);
-
-  // console.log(jsonObj.RateV4Response.Package.Postage.SpecialServices);
-  return jsonObj;
-
-}
 
 const detailTags = [
   "div#detailBullets_feature_div",
@@ -45,15 +20,15 @@ const detailTags = [
   "td.bucket .content"
 ];
 
+const USPS_URL = "http://production.shippingapis.com/ShippingAPI.dll?";
 
-const USPS_URL = "http://production.shippingapis.com/ShippingAPI.dll?API=RateV4&XML=";
-const USPS_HEAD = '<RateV4Request USERID="' + process.env.USPS_KEY + '">'
+const USPS_HEAD = 'API=RateV4&XML=<RateV4Request USERID="' + process.env.USPS_KEY + '">'
   + '<Revision>2</Revision><Package ID="1ST"><Service>PRIORITY</Service>'
   + '<FirstClassMailType>FLAT</FirstClassMailType>';
 const USPS_END = "<Machinable>true</Machinable></Package></RateV4Request>";
 
-
 module.exports = {
+
   calcShipping: function (req, res) {
     var info = JSON.parse(req.params.info);
 
@@ -76,10 +51,17 @@ module.exports = {
 
     axios.get(url)
       .then(shippingRes => {
-        var info = XMLtoJSON(shippingRes.data);
-        res.json(info.RateV4Response.Package.Postage.Rate)
+        var info = XMLParser.XMLtoJSON(shippingRes.data);
+        if (info.RateV4Response.Package.Error)
+          res.json({ error: info.RateV4Response.Package.Error.Description });
+        else
+          res.json(info.RateV4Response.Package.Postage.Rate)
       })
-      .catch(err => res.status(422).json(err));
+      .catch(err => {
+        console.log("...... error");
+        console.log(err);
+        res.status(422).json(err)
+      });
 
   },
 
@@ -88,25 +70,26 @@ module.exports = {
     const idList = req.params.id.split("|");
     console.log(idList);
 
+    // const idList = [ "B003B6S36S"];
+
     var numCompleted = 0;
     var shippingInfoArr = [];
     for (let x = 0; x < idList.length; x++) {
-      console.log(".... " + idList[x]);
-
-      axios.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
-
-        const $ = cheerio.load(response.data);
-        for (let i = 0; i < detailTags.length; i++) {
+      pcAPI.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
+        const $ = cheerio.load(response.body);
+      // axios.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
+        // const $ = cheerio.load(response.data);
+        var i = 0;
+        for (i = 0; i < detailTags.length; i++) {
           let numRec = $(detailTags[i]).length;
-          console.log(idList[x] + " " + numRec + " for " + i);
           if (numRec > 0) {
-            let sdim = "", weight = "", lable = "";
+            let sdim = "", weight = "";
             $(detailTags[i]).each(function (i, element) {
               switch ($(this).children().get(0).name) {
                 case "tbody":
                   $(this).find('tr').each(function (index, element) {
-                    label = $(element).find("th").text().trim();
-                    switch (label) {
+                    // label = $(element).find("th").text().trim();
+                    switch ($(element).find("th").text().trim()) {
                       case "Product Dimensions":
                       case "Package Dimensions":
                         sdim = $(element).find("td").text().trim();
@@ -122,10 +105,11 @@ module.exports = {
                   });
                   break;
                 case "ul":
+                case "table":
                   $(this).find('li').each(function (index, element) {
                     var item = $(element).text().split(":");
-                    label = item[0].trim();
-                    switch (label) {
+                    // label = item[0].trim();
+                    switch (item[0].trim()) {
                       case "Product Dimensions":
                       case "Package Dimensions":
                         sdim = item[1].trim();
@@ -152,11 +136,10 @@ module.exports = {
               shippingInfoArr.push(shippingInfo);
             }
             numCompleted++;
-            // console.log("... "+ numCompleted + " - " + idList.length);
+            console.log("...  then " + idList[x] + " " + numCompleted + " - " + idList.length);
             if (numCompleted === idList.length) {
               console.log("obtain all shipping info");
               for (let j = 0; j < shippingInfoArr.length; j++) {
-                console.log(shippingInfoArr[j]);
                 db.Product.findOneAndUpdate(
                   { id: shippingInfoArr[j].id },
                   {
@@ -165,12 +148,7 @@ module.exports = {
                       dimension: shippingInfoArr[j].dimension
                     }
                   }
-                )
-                  .then((dbUpdate) => {
-                    // If the User was updated successfully, send it back to the client
-                    console.log("update success " + dbUpdate);
-
-                  })
+                );
               }
 
               res.json(shippingInfoArr);
@@ -180,61 +158,73 @@ module.exports = {
           }
 
         }
+        if (i === detailTags.length) {
+          // found nothing
+          numCompleted++;
+          console.log(".. found none " + idList[x] + " " + numCompleted + " " + idList.length);
+
+          if (numCompleted === idList.length) {
+            res.json(shippingInfoArr);
+          }
+        }
+        console.log("..... " + i);
       })
         .catch(err => {
           // console.log(err);
           numCompleted++;
-          console.log(numCompleted + " " + idList.length);
+          console.log(".. catch " + idList[x] + " " + numCompleted + " " + idList.length);
           if (numCompleted === idList.length) {
             res.json(shippingInfoArr);
           }
         });
     }
-
   },
+
   scrape: function (req, res) {
     // A GET route for scraping the echoJS website
     // First, we grab the body of the html with axios
 
-    console.log(req.params.id);
+    // axios.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
+    //   const $ = cheerio.load(response.data);
+    pcAPI.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
+      if (response.statusCode === 200 && response.originalStatus === 200) {  // by proxycrawl api
+        const $ = cheerio.load(response.body);
 
-    // axios.get("https://www.amazon.com/s?k=bluetooth+speaker").then((response) => {
-    axios.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
-      // Then, we load that into cheerio and save it to $ for a shorthand selector
-      const $ = cheerio.load(response.data);
+        // Now, we grab every h2 within an article tag, and do the following:
+        var numRec = $("div.s-result-item").length;
+        console.log("num rec " + numRec);
+        const arrObj = [];
 
-      // Now, we grab every h2 within an article tag, and do the following:
-      var numRec = $("div.s-result-item").length;
-      console.log("num rec " + numRec);
-      const arrObj = [];
+        $("div.s-result-item").each(function (i, element) {
+          // Save an empty result object
+          const result = {};
 
-      $("div.s-result-item").each(function (i, element) {
-        // Save an empty result object
-        const result = {};
+          result.id = $(this).
+            attr("data-asin");
 
-        result.id = $(this).
-          attr("data-asin");
+          result.image = $(this)
+            .find(".s-image")
+            .attr("src");
+          result.title = $(this)
+            .find("span.a-size-medium.a-color-base.a-text-normal")
+            .text();
 
-        result.image = $(this)
-          .find(".s-image")
-          .attr("src");
-        result.title = $(this)
-          .find("span.a-size-medium.a-color-base.a-text-normal")
-          .text();
+          if (!result.title)
+            result.title = $(this).find("span.a-size-base-plus.a-color-base.a-text-normal").text();
 
-        if (!result.title)
-          result.title = $(this).find("span.a-size-base-plus.a-color-base.a-text-normal").text();
+          result.price = $(this)
+            .find("span.a-offscreen").first()
+            .text();
 
-        result.price = $(this)
-          .find("span.a-offscreen").first()
-          .text();
+          arrObj.push(result);
 
-        arrObj.push(result);
+        });
 
-      });
-
-      // Send data to the client
-      res.json(arrObj);
+        // Send data to the client
+        res.json(arrObj);
+      } else {
+        console.log('Failed: ', response.statusCode, response.originalStatus);
+      }
 
     })
       .catch(err => {
@@ -243,35 +233,119 @@ module.exports = {
   },
 
   saveProduct: function (req, res) {
+    // find weight and dimension before saving.
     console.log(req.body);
-    db.Product
-      .create(req.body)
-      .then(data => res.json(data))
-      .catch(err => res.status(400).json(err));
+    console.log("searching ... " + req.body.id);
+    pcAPI.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
+      const $ = cheerio.load(response.body);
+    // axios.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
+      // const $ = cheerio.load(response.data);
+      var i = 0;
+      for (i = 0; i < detailTags.length; i++) {
+        console.log("... " + detailTags[i]);
+        let numRec = $(detailTags[i]).length;
+        if (numRec > 0) {
+          let sdim = "", weight = "";
+          $(detailTags[i]).each(function (i, element) {
+            switch ($(this).children().get(0).name) {
+              case "tbody":
+                $(this).find('tr').each(function (index, element) {
+                  // label = $(element).find("th").text().trim();
+                  switch ($(element).find("th").text().trim()) {
+                    case "Product Dimensions":
+                    case "Package Dimensions":
+                      sdim = $(element).find("td").text().trim();
+                      break;
+                    case "Item Weight":
+                    case "Shipping Weight":
+                      weight = $(element).find("td").text().trim();
+                      break;
+                  }
+                  if (weight && sdim) {
+                    return false;
+                  }
+                });
+                break;
+              case "ul":
+              case "table":
+                $(this).find('li').each(function (index, element) {
+                  var item = $(element).text().split(":");
+                  // label = item[0].trim();
+                  switch (item[0].trim()) {
+                    case "Product Dimensions":
+                    case "Package Dimensions":
+                      sdim = item[1].trim();
+                      break;
+                    case "Item Weight":
+                    case "Shipping Weight":
+                      weight = item[1].trim();
+                      break;
+                  }
+                  if (weight && sdim) {
+                    return false;
+                  }
+                });
+                break;
+            }
+          });
+
+          info = req.body;
+          if (weight && sdim) {
+            info.weight = weight.split("(")[0].trim();
+            info.dimension = sdim.split("inch")[0].trim();
+          }
+          console.log("saving .. found " + detailTags[i]);
+          console.log(info);
+
+          db.Product
+            .create(info)
+            .then(data => res.json(data))
+            .catch(err => res.status(400).json(err));
+
+
+          break;
+        }
+
+      }
+      if (i === detailTags.length) {
+        // found nothing
+        console.log("saving ..");
+        console.log(req.body);
+        db.Product
+          .create(req.body)
+          .then(data => res.json(data))
+          .catch(err => res.status(400).json(err));
+      }
+    })
+      .catch(err => {
+        console.log(err);
+        // found nothing
+        console.log("saving ..");
+        console.log(req.body);
+        db.Product
+          .create(req.body)
+          .then(data => res.json(data))
+          .catch(err => res.status(400).json(err));
+      });
   },
 
   findProduct: function (req, res) {
+    console.log("search ...   userid : " + req.params.id);
+    req.params.id
     db.Product
-      .find(req.query)
+      .find({ userId: req.params.id })
       .then(dbProduct => res.json(dbProduct))
       .catch(err => res.status(422).json(err));
   },
 
   deleteProduct: function (req, res) {
-    console.log("In controller deleteProduct: " + JSON.stringify(req.params));
-    console.log("req.params.id: " + req.params.id);
-  //   db.Product.findByIdAndRemove(req.params.id, function (err,product){
-  //     if(err) { throw err; }
-  //     console.log("Success: " + product);
-  //     res.json(product);
-  // });
-  db.Product.findOne({id: req.params.id}, function (err,product){
-    if(err) { throw err; }
-    console.log("Product found, now removing: " + product);
-    product.remove();
-    console.log("Product removed");
-    res.json(product);
-});
+    db.Product.findOne({ id: req.params.id }, function (err, product) {
+      if (err) { throw err; }
+      console.log("Product found, now removing: " + product);
+      product.remove();
+      console.log("Product removed");
+      res.json(product);
+    });
     // db.Product
     //   .findById({ id: req.params.id })
     //   .then(dbProduct => dbProduct.remove())

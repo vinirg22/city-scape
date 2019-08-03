@@ -1,13 +1,18 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import React, { Component } from 'react';
+import AuthService from './components/AuthService';
 import './App.css';
 import API from './utils/API';
 
 class Home extends Component {
-    state = {
-        keyword: "",
-        products: []
-    };
+    constructor() {
+        super();
+        this.Auth = new AuthService();
+        this.state = {
+            keyword: "",
+            products: []
+        };
+    }
 
     handleInputChange = event => {
         const { name, value } = event.target;
@@ -21,33 +26,41 @@ class Home extends Component {
 
         API.scrapeProduct(searchTerm)
             .then(res => {
-                console.log(res.data.length);
-                console.log(res.data);
 
                 // check if duplicate items
                 var uItems = [];
-                for(let i=0; i<res.data.length-1; i++) {
+                for (let i = 0; i < res.data.length - 1; i++) {
                     var found = false;
-                    for(let j=i+1; j<res.data.length; j++) {
+                    for (let j = i + 1; j < res.data.length; j++) {
                         if (res.data[i].id === res.data[j].id) {
                             found = true;
                             break;
                         }
                     }
                     if (!found) {
-                        uItems.push(res.data[i]);
+                        // console.log(res.data[i]);
+                        if (res.data[i].image && res.data[i].price && res.data[i].title)
+                            uItems.push(res.data[i]);
                     }
                 }
 
-                this.setState({ products: uItems , keyword: "" });
+                this.setState({ products: uItems, keyword: "" });
 
-                // this.props.history.replace('/');
             })
             .catch(err => alert(err));
     }
 
-    saveSearch = product => {
+    saveSearch = (e, product) => {
+        if (!this.Auth.loggedIn()) {
+            this.props.history.replace('/login');
+            return;
+        }
 
+        e.target.style.display = "none";
+        e.target.nextSibling.style.display = "inline";
+
+        product.userId = this.Auth.getProfile().id;
+        console.log(product);
         API.saveProduct(product)
             .then((res) => {
                 const products = this.state.products.filter(item => product.id !== item.id);
@@ -92,7 +105,8 @@ class Home extends Component {
                                     <h5 className="card-title">{product.title}</h5>
                                     <div className="clearfix">
                                         <p className="card-text float-left">{product.price}</p>
-                                        <button className="btn-add float-right" onClick={() => this.saveSearch(product)}>Add</button>
+                                        <button className="btn-add float-right" onClick={(e) => this.saveSearch(e, product)}>Add</button>
+                                        <img className="save-gif float-right" src={process.env.PUBLIC_URL + "/images/blueloading.gif"} alt="loading" />
                                     </div>
                                 </div>
                             </div>

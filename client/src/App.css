@@ -54,6 +54,11 @@
   font-size: 15px;
 }
 
+.save-gif {
+  width: 35px;
+  display: none;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

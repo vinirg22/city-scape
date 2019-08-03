@@ -13,5 +13,8 @@ router.route("/login")
 router.route("/:id", isAuthenticated)
     .get(userController.getProfile)
 
+router.route("/zip/:id")
+    .get(userController.validateZip)
+
 module.exports = router;
 

@@ -34,21 +34,21 @@ class Summary extends Component {
 
   calcProfit = event => {
     event.preventDefault();
-    
-    if (!this.verifyInputNotEmpty("p-cost", "Product cost", "profit-error"))
-    return;
-    if (!this.verifyInputNotEmpty("p-shipping", "Shipping cost", "profit-error"))
-    return;
-    if (!this.verifyInputNotEmpty("p-price", "Current price", "profit-error"))
-    return;
-    
+
     this.clearInputError();
+
+    if (!this.verifyInputNotEmpty("p-cost", "Product cost", "profit-error"))
+      return;
+    if (!this.verifyInputNotEmpty("p-shipping", "Shipping cost", "profit-error"))
+      return;
+    if (!this.verifyInputNotEmpty("p-price", "Current price", "profit-error"))
+      return;
 
     var cost = Number(document.getElementById("p-cost").value)
     var shipping = Number(document.getElementById("p-shipping").value)
     var price = Number(document.getElementById("p-price").value)
     var profit = price - (cost + shipping);
-    document.getElementById("result").value = profit.toFixed(2);
+    document.getElementById("p-result").value = profit.toFixed(2);
   }
 
   verifyInputNotEmpty(eleName, sName, errElem) {
@@ -61,6 +61,9 @@ class Summary extends Component {
 
   calcShipping = event => {
     event.preventDefault();
+
+    this.clearInputError();
+
     if (!this.verifyInputNotEmpty("dim-w", "Item width", "shipping-error"))
       return;
     if (!this.verifyInputNotEmpty("dim-l", "Item length", "shipping-error"))
@@ -74,7 +77,6 @@ class Summary extends Component {
     if (!this.verifyInputNotEmpty("p-dest-zip", "Destination zip code", "shipping-error"))
       return;
 
-    this.clearInputError();
 
 
     var shippingInfo = {
@@ -88,17 +90,22 @@ class Summary extends Component {
     }
 
     API.obtainShippingCost(JSON.stringify(shippingInfo))
-    .then(res => {
+      .then(res => {
         // console.log(res.data);
-        document.getElementById("p-shipping").value = res.data;
+        if (res.data.error)
+          document.getElementById("shipping-error").innerText = res.data.error;
+        else
+          document.getElementById("p-shipping").value = res.data;
 
         // this.setState({ products: res.data, keyword: "" });
-    })
-    .catch(err => alert(err));
+      })
+      .catch(err => {
+        document.getElementById("shipping-error").innerText = err;
+      });
   }
 
   clearInputError() {
-    document.getElementById("shipping-error").innerText = "";
+    document.getElementById("profit-error").innerText = "";
     document.getElementById("shipping-error").innerText = "";
   }
 
@@ -130,8 +137,8 @@ class Summary extends Component {
     } else {
       document.getElementById("p-weight").value = "";
     }
-    if (product.price[0]==="$")
-    document.getElementById("p-price").value = product.price.slice(1);
+    if (product.price[0] === "$")
+      document.getElementById("p-price").value = product.price.slice(1);
   }
 
   handleNumberInput = e => {
@@ -148,6 +155,13 @@ class Summary extends Component {
     if (".0123456789".indexOf(e.key) < 0)
       e.preventDefault();
   }
+
+  handleInputChange = event => {
+    const { name, value } = event.target;
+    this.setState({
+      [name]: value
+    });
+  };
 
   render() {
     return (
@@ -176,7 +190,7 @@ class Summary extends Component {
               <div className="row">
                 <div className="card sel-calc-container">
                   <div className="card-header">
-                    Shipping information
+                    Shipping information (based on priority shipping)
                   </div>
                   <div className="card-body">
                     <form>
@@ -201,7 +215,8 @@ class Summary extends Component {
                         <div className="card-body">
                           Zip Code (From)<br />
                           <InputNumber id="p-org-zip"
-                            onKeyDown={this.handleNumberInput}
+                            onChange={this.handleInputChange}
+                            name="zipcode"
                             value={this.state.zipcode}
                           /><br />
                           Zip Code (To)<br />
@@ -225,12 +240,12 @@ class Summary extends Component {
                       Product Cost<br />
                       <InputNumber id="p-cost" onKeyDown={this.handleNumberInput} /><br />
                       Shipping Cost<br />
-                      <InputNumber id="p-shipping" onKeyDown={this.handleNumberInput} /><br />
+                      <InputNumber id="p-shipping" readOnly /><br />
                       Current Price<br />
                       <InputNumber id="p-price" onKeyDown={this.handleNumberInput} /><br />
 
                       Possible Profit<br />
-                      <input id="result" type="number" name="result" /><br /><br />
+                      <input id="p-result" readOnly /><br /><br />
                       <div className="clearfix">
                         <button className="btn btn-success float-left" onClick={this.calcProfit}>Calculate Profit</button>
                         <p id="profit-error" className="text-center my-0"></p>
