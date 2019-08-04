@@ -20,6 +20,12 @@ class Home extends Component {
             [name]: value
         });
     }
+    handleKeyDown = event => {
+        if (event.key === 'Enter') {
+            console.log('Enter pressed');
+            {this.submitSearch()};
+          }
+    }
 
     submitSearch = event => {
         var searchTerm = this.state.keyword.replace(/ +/g, "+");
@@ -69,28 +75,29 @@ class Home extends Component {
             })
     }
 
+    
+
     render() {
         return (
             <div>
-                <div className="hero-image">
-                    <img className="hero-image fluid" src="../images/Home-header.png" alt="header" />
-                    <div className="hero-text">
-                        <div className="wrap clearfix">
-                            <div className="search">
-                                <input
-                                    value={this.state.keyword}
-                                    name="keyword"
-                                    type="text"
-                                    className="searchTerm"
-                                    placeholder="What are you looking for?"
-                                    onChange={this.handleInputChange}
-                                />
-                                <button type="submit" className="searchButton" onClick={this.submitSearch}>
-                                    <i className="fa fa-search"></i>
-                                </button>
-                            </div>
+            <div className="hero-image">
+                <img className="hero-image fluid" src="../images/Home-header.png" alt="header" />
+                <div className="hero-text">
+                    <div className="wrap clearfix">
+                        <div className="search">
+                            <input
+                                value={this.state.keyword}
+                                name="keyword"
+                                type="text"
+                                className="searchTerm"
+                                placeholder="What are you looking for?"
+                                onChange={this.handleInputChange}
+                                onKeyDown={this.handleKeyDown}
+                            />
+                            <button type="submit" className="searchButton" onClick={this.submitSearch}>
+                                <i className="fa fa-search"></i>
+                            </button>
                         </div>
-
                     </div>
                 </div>
 
