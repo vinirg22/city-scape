@@ -14,6 +14,8 @@ class Home extends Component {
         };
     }
 
+    productRender = true;
+
     handleInputChange = event => {
         const { name, value } = event.target;
         this.setState({
@@ -23,7 +25,7 @@ class Home extends Component {
     handleKeyDown = event => {
         if (event.key === 'Enter') {
             console.log('Enter pressed');
-            { this.submitSearch() };
+            this.submitSearch();
         }
     }
 
@@ -31,6 +33,7 @@ class Home extends Component {
 
         var searchTerm = this.state.keyword.replace(/ +/g, "+");
 
+        this.productRender = false;
         API.scrapeProduct(searchTerm)
             .then(res => {
 
@@ -82,11 +85,15 @@ class Home extends Component {
 
 
     render() {
-        return (
+        return ([
+
             <div>
-                <div className="hero-image">
-                    <img className="hero-image fluid" src="../images/Home-header.png" alt="header" />
-                    <div className="hero-text">
+                <div className="hero-image hero-image header-image fluid">
+                <img id="headerImg "className="hero-image header2 fluid" src="/images/header.png" alt="header" />
+                    <video className="hero-image header-image fluid" autoPlay muted id="myVideo">
+                        <source src={process.env.PUBLIC_URL + "/images/video2.mp4"} type="video/mp4" />
+                    </video>
+                        <div className="hero-text" >
                         <div className="wrap clearfix">
                             <div className="search">
                                 <input
@@ -105,14 +112,11 @@ class Home extends Component {
                         </div>
                     </div>
                 </div>
-
                 <div className="container search-result py-3">
-                    <h5>Products found...</h5>
                     <div className="card-columns">
                         {this.state.products.map(product => (
                             <div className="card" key={product.id}>
                                 <img src={product.image} className="card-img-top product-img" alt="..." />
-
                                 <div className="card-body">
                                     <h5 className="card-title">{product.title}</h5>
                                     <div className="clearfix">
@@ -126,7 +130,7 @@ class Home extends Component {
                     </div>
                 </div>
             </div>
-        );
+        ]);
     }
 }
 
