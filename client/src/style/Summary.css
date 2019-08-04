@@ -35,6 +35,9 @@
     font-weight: bold;
 }
 
-#result {
+#p-result, #p-shipping {
+    background-color: lightgray;
+}
+#p-result {
     border: 3px solid darkgray;
 }

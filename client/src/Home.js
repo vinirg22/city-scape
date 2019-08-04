@@ -1,13 +1,18 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import React, { Component } from 'react';
+import AuthService from './components/AuthService';
 import './App.css';
 import API from './utils/API';
 
 class Home extends Component {
-    state = {
-        keyword: "",
-        products: []
-    };
+    constructor() {
+        super();
+        this.Auth = new AuthService();
+        this.state = {
+            keyword: "",
+            products: []
+        };
+    }
 
     productRender = true;
 
@@ -17,15 +22,20 @@ class Home extends Component {
             [name]: value
         });
     }
+    handleKeyDown = event => {
+        if (event.key === 'Enter') {
+            console.log('Enter pressed');
+            { this.submitSearch() };
+        }
+    }
 
     submitSearch = event => {
+
         var searchTerm = this.state.keyword.replace(/ +/g, "+");
 
         this.productRender = false;
         API.scrapeProduct(searchTerm)
             .then(res => {
-                console.log(res.data.length);
-                console.log(res.data);
 
                 // check if duplicate items
                 var uItems = [];
@@ -38,20 +48,32 @@ class Home extends Component {
                         }
                     }
                     if (!found) {
-                        uItems.push(res.data[i]);
+                        // console.log(res.data[i]);
+                        if (res.data[i].image && res.data[i].price && res.data[i].title)
+                            uItems.push(res.data[i]);
                     }
                 }
-
                 this.setState({ products: uItems, keyword: "" });
+                document.getElementsByClassName("search-result")[0].scrollIntoView({
+                    behavior: 'smooth'
+                });
 
-                // this.props.history.replace('/');
+
             })
             .catch(err => alert(err));
     }
 
+    saveSearch = (e, product) => {
+        if (!this.Auth.loggedIn()) {
+            this.props.history.replace('/login');
+            return;
+        }
 
-    saveSearch = product => {
+        e.target.style.display = "none";
+        e.target.nextSibling.style.display = "inline";
 
+        product.userId = this.Auth.getProfile().id;
+        console.log(product);
         API.saveProduct(product)
             .then((res) => {
                 const products = this.state.products.filter(item => product.id !== item.id);
@@ -59,6 +81,8 @@ class Home extends Component {
                 this.setState({ products: products });
             })
     }
+
+
 
     render() {
         return (
@@ -82,13 +106,13 @@ class Home extends Component {
                                     className="searchTerm"
                                     placeholder="What are you looking for?"
                                     onChange={this.handleInputChange}
+                                    onKeyDown={this.handleKeyDown}
                                 />
                                 <button type="submit" className="searchButton" onClick={this.submitSearch}>
                                     <i className="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -102,7 +126,8 @@ class Home extends Component {
                                     <h5 className="card-title">{product.title}</h5>
                                     <div className="clearfix">
                                         <p className="card-text float-left">{product.price}</p>
-                                        <button className="btn-add float-right" onClick={() => this.saveSearch(product)}>Add</button>
+                                        <button className="btn-add float-right" onClick={(e) => this.saveSearch(e, product)}>Add</button>
+                                        <img className="save-gif float-right" src={process.env.PUBLIC_URL + "/images/blueloading.gif"} alt="loading" />
                                     </div>
                                 </div>
                             </div>
