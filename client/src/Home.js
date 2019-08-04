@@ -28,7 +28,6 @@ class Home extends Component {
     }
 
     submitSearch = event => {
-        event.preventDefault();
 
         var searchTerm = this.state.keyword.replace(/ +/g, "+");
 
