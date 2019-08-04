@@ -1,4 +1,4 @@
-
+/* 
 .App {
   text-align: center;
 }
@@ -17,11 +17,20 @@
 
 .App-intro {
   font-size: large;
+} */
+
+#myVideo{
+  position:fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%; 
+  min-height: 100%;
+  z-index: -1;
 }
 
 .search-result {
-  height : 50vh;
-  
+  background-color: rgba(211, 211, 211,0.8);
+
 }
 
 .search-result h5 {
@@ -31,6 +40,7 @@
 
 .card-columns {
   column-count: 4;
+  padding : 15px;
 }
 .card {
  
