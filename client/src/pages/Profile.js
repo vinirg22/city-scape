@@ -120,6 +120,17 @@ class Profile extends Component {
      console.log("Removing product in Profile.js...");
     API.removeProduct(id)
       .then(res => {
+        var products = this.state.myProducts;
+        var updatedProducts = [];
+        console.log("id: " + id);
+        products.forEach(myFunction);
+        function myFunction(item, index) {
+          if(item.id !== id){
+            updatedProducts.push(item);
+          }
+          console.log("item: " + JSON.stringify(item));  
+        }
+        this.setState({myProducts: updatedProducts});
         console.log("Product removed");
       })
       .catch(err => console.log(err));
@@ -128,8 +139,11 @@ class Profile extends Component {
 
 
   render() {
-    var prodStr = "My products (" + this.state.myProducts.length
+    var prodStr = "Empty";
+    if(this.state.myProducts && this.state.myProducts.length > 0){
+      prodStr = "My products (" + this.state.myProducts.length
       + (this.state.myProducts.length > 1 ? " items)" : " item)");
+    }
     return (
       <div className="container Profile">
         <p>Welcome: {this.state.username}</p>

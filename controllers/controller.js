@@ -45,13 +45,11 @@ const detailTags = [
   "td.bucket .content"
 ];
 
-
 const USPS_URL = "http://production.shippingapis.com/ShippingAPI.dll?API=RateV4&XML=";
 const USPS_HEAD = '<RateV4Request USERID="' + process.env.USPS_KEY + '">'
   + '<Revision>2</Revision><Package ID="1ST"><Service>PRIORITY</Service>'
   + '<FirstClassMailType>FLAT</FirstClassMailType>';
 const USPS_END = "<Machinable>true</Machinable></Package></RateV4Request>";
-
 
 module.exports = {
   calcShipping: function (req, res) {
