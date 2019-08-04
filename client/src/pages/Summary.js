@@ -6,6 +6,7 @@ import InputNumber from "../components/Input";
 import "../style/Summary.css"
 
 
+
 class Summary extends Component {
 
   state = {
@@ -156,7 +157,7 @@ class Summary extends Component {
 
         <div className="container">
           <div className="row">
-            <div className="col-4">
+            <div className="col-md-4 col-sm-6">
               <div className="card">
                 <div className="card-header">
                   Selected Items
@@ -172,7 +173,7 @@ class Summary extends Component {
                 </div>
               </div>
             </div>
-            <div className="col-8">
+            <div className="col-md-6 col-sm-6">
               <div className="row">
                 <div className="card sel-calc-container">
                   <div className="card-header">
@@ -197,9 +198,9 @@ class Summary extends Component {
                           <button className="btn btn-primary mt-2" onClick={this.calcShipping}>Calculate Shipping</button>
                         </div>
                       </div>
-                      <div className="card card-shipping">
+                      <div className="card card-shipping col-sm-4 ">
                         <div className="card-body">
-                          Zip Code (From)<br />
+                        Zip Code (From)<br />
                           <InputNumber id="p-org-zip"
                             onKeyDown={this.handleNumberInput}
                             value={this.state.zipcode}
