@@ -11,10 +11,10 @@ router.route("/scrapeDetail/:id")
   .get(controller.scrapeDetail);
 
 router.route("/")
-  .post(controller.saveProduct)
-  .get(controller.findProduct);
-
-router.route("/:id")
+  .post(controller.saveProduct);
+  
+  router.route("/:id")
+  .get(controller.findProduct)
   .delete(controller.deleteProduct);
     
 // .delete(controller.remove);

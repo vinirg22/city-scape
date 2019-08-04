@@ -14,6 +14,10 @@ export default {
     return axios.get(`/api/products/shipping/${info}`);
   },
 
+  validateZip: (zip) => {
+    return axios.get(`/api/user/zip/${zip}`);
+  },
+
   getUser: (id) => {
     return axios.get(`/api/user/${id}`);
   },
@@ -26,12 +30,11 @@ export default {
     return axios.post('api/products/', product);
   },
 
-  getProduct: () => {
-    return axios.get('api/products/');
+  getProduct: (id) => {
+    return axios.get('api/products/' + id);
   },
 
   removeProduct: (id) => {
-    console.log("Removing product in API.js");
     return axios.delete('api/products/' + id);
   }
  

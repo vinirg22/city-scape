@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import AuthService from './../components/AuthService';
 import {Link} from 'react-router-dom';
+import "../style/login.css"
+
 
 class Login extends Component {
   constructor() {
@@ -26,7 +28,7 @@ class Login extends Component {
 
       })
       .catch(err => {
-        alert(err.response.data.message)
+        document.getElementById("login-error").innerText = err.response.data.message;
       });
   };
 
@@ -61,6 +63,7 @@ class Login extends Component {
                    onChange={this.handleChange}/>
           </div>
           <button type="submit" className="btn btn-primary">Submit</button>
+          <span id="login-error"></span>
         </form>
         <p><Link to="/signup">Go to Signup</Link></p>
       </div>

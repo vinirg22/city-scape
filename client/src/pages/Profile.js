@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import React, { Component } from 'react';
 import withAuth from './../components/withAuth';
+
 // import Modal from '../components/Modal';
 import API from './../utils/API';
 // import { Link } from 'react-router-dom';
@@ -10,7 +11,6 @@ import MyModal from '../components/Modal';
 
 
 class Profile extends Component {
-
   state = {
     username: "",
     myProducts: [],
@@ -23,21 +23,23 @@ class Profile extends Component {
         username: res.data.username,
       })
     });
-    var data = localStorage.getItem("productList");
-    if (data === null) {
-      return;
-    }
-    var pList = JSON.parse(data);
-    API.getProduct()
+
+    API.getProduct(this.props.user.id)
       .then(res => {
-        for (let x = 0; x < pList.length; x++) {
-          for (let i = 0; i < res.data.length; i++) {
-            if (res.data[i].id === pList[x].id) {
-              res.data[i].check = true;
-              break;
+        var data = localStorage.getItem("productList");
+        if (data) {
+          var pList = JSON.parse(data);
+          for (let x = 0; x < pList.length; x++) {
+            for (let i = 0; i < res.data.length; i++) {
+              if (res.data[i].id === pList[x].id) {
+                res.data[i].check = true;
+                break;
+              }
             }
           }
         }
+        console.log("profile page getting data done..")
+        console.log(res.data);
         this.setState({ myProducts: res.data });
       });
   }
@@ -59,14 +61,18 @@ class Profile extends Component {
   obtainShippingInfo = () => {
 
     // if products already have shipping info, skip them.
-    var idList = [];
     var tempProd = this.state.myProducts;
 
+    var idList = [];
     for (let i = 0; i < tempProd.length; i++) {
       if (!tempProd[i].weight || !tempProd[i].dimension) {
         console.log(tempProd[i].id + " got no info");
         idList.push(tempProd[i].id);
       }
+    }
+
+    if (idList.length === 0) {
+      return;
     }
 
     var productStr = idList.join("|");
@@ -89,8 +95,7 @@ class Profile extends Component {
         }
         console.log(".........");
 
-        this.setState({ myProducts: tempProd , modalShow: false });
-        // this.setState({ myProducts: tempProd });
+        this.setState({ myProducts: tempProd, modalShow: false });
 
       })
     this.setState({ modalShow: true });
@@ -116,22 +121,14 @@ class Profile extends Component {
     }
   }
 
-   removeProduct = (id) => {
-     console.log("Removing product in Profile.js...");
+  removeProduct = (e, id) => {
+    e.target.style.display = "none";
+    e.target.nextSibling.style.display = "inline";
+
     API.removeProduct(id)
       .then(res => {
-        var products = this.state.myProducts;
-        var updatedProducts = [];
-        console.log("id: " + id);
-        products.forEach(myFunction);
-        function myFunction(item, index) {
-          if(item.id !== id){
-            updatedProducts.push(item);
-          }
-          console.log("item: " + JSON.stringify(item));  
-        }
-        this.setState({myProducts: updatedProducts});
-        console.log("Product removed");
+        const products = this.state.myProducts.filter(item => id !== item.id);
+        this.setState({ myProducts: products });
       })
       .catch(err => console.log(err));
   }
@@ -174,7 +171,8 @@ class Profile extends Component {
                       <div className="clearfix">
                         <p className="card-text float-left">{product.price}</p>
                         {this.renderShippingReady(product)}
-                        <button className="btn-remove float-right" onClick={() => this.removeProduct(product.id)}>Remove</button>
+                        <button className="btn-remove float-right" onClick={(e) => this.removeProduct(e, product.id)}>Remove</button>
+                        <img className="save-gif float-right" src={process.env.PUBLIC_URL + "/../images/blueloading.gif"} alt="loading" />
                       </div>
                       <div className="checkbox-focus pl-2">
                         <input
