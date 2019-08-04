@@ -20,6 +20,12 @@ class Home extends Component {
             [name]: value
         });
     }
+    handleKeyDown = event => {
+        if (event.key === 'Enter') {
+            console.log('Enter pressed');
+            { this.submitSearch() };
+        }
+    }
 
     submitSearch = event => {
         event.preventDefault();
@@ -48,7 +54,7 @@ class Home extends Component {
                 this.setState({ products: uItems, keyword: "" });
                 document.getElementsByClassName("search-result")[0].scrollIntoView({
                     behavior: 'smooth'
-                  });
+                });
 
 
             })
@@ -74,14 +80,16 @@ class Home extends Component {
             })
     }
 
+
+
     render() {
         return (
             <div>
                 <div className="hero-image">
                     <img className="hero-image fluid" src="../images/Home-header.png" alt="header" />
                     <div className="hero-text">
-                        <form className="wrap clearfix">
-                            <div className="form-group search">
+                        <div className="wrap clearfix">
+                            <div className="search">
                                 <input
                                     value={this.state.keyword}
                                     name="keyword"
@@ -89,14 +97,13 @@ class Home extends Component {
                                     className="searchTerm"
                                     placeholder="What are you looking for?"
                                     onChange={this.handleInputChange}
-                                    required
+                                    onKeyDown={this.handleKeyDown}
                                 />
                                 <button type="submit" className="searchButton" onClick={this.submitSearch}>
                                     <i className="fa fa-search"></i>
                                 </button>
                             </div>
-                        </form>
-
+                        </div>
                     </div>
                 </div>
 

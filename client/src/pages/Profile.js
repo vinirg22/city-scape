@@ -142,15 +142,17 @@ class Profile extends Component {
     API.removeProduct(id)
       .then(res => {
         const products = this.state.myProducts.filter(item => id !== item.id);
-
         this.setState({ myProducts: products });
       })
       .catch(err => console.log(err));
   }
 
   render() {
-    var prodStr = "My products (" + this.state.myProducts.length
+    var prodStr = "Empty";
+    if(this.state.myProducts && this.state.myProducts.length > 0){
+      prodStr = "My products (" + this.state.myProducts.length
       + (this.state.myProducts.length > 1 ? " items)" : " item)");
+    }
     return (
       <div className="container Profile">
         <p>Welcome: {this.state.username}</p>
