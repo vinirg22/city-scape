@@ -112,6 +112,10 @@ class Summary extends Component {
   itemSelect = (e, product) => {
 
     this.clearInputError();
+    document.getElementById("p-cost").value = "";
+    document.getElementById("p-shipping").value = "";
+    document.getElementById("p-price").value = "";
+    document.getElementById("p-result").value = "";
 
     const objs = document.getElementsByClassName("sel-product-img");
     for (let i = 0; i < objs.length; i++) {

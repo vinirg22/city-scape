@@ -75,10 +75,10 @@ module.exports = {
     var numCompleted = 0;
     var shippingInfoArr = [];
     for (let x = 0; x < idList.length; x++) {
-      pcAPI.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
-        const $ = cheerio.load(response.body);
-      // axios.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
-        // const $ = cheerio.load(response.data);
+      // pcAPI.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
+      //   const $ = cheerio.load(response.body);
+      axios.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
+        const $ = cheerio.load(response.data);
         var i = 0;
         for (i = 0; i < detailTags.length; i++) {
           let numRec = $(detailTags[i]).length;
@@ -184,11 +184,11 @@ module.exports = {
     // A GET route for scraping the echoJS website
     // First, we grab the body of the html with axios
 
-    // axios.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
-    //   const $ = cheerio.load(response.data);
-    pcAPI.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
-      if (response.statusCode === 200 && response.originalStatus === 200) {  // by proxycrawl api
-        const $ = cheerio.load(response.body);
+    axios.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
+      const $ = cheerio.load(response.data);
+    // pcAPI.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
+    //   if (response.statusCode === 200 && response.originalStatus === 200) {  // by proxycrawl api
+    //     const $ = cheerio.load(response.body);
 
         // Now, we grab every h2 within an article tag, and do the following:
         var numRec = $("div.s-result-item").length;
@@ -222,9 +222,9 @@ module.exports = {
 
         // Send data to the client
         res.json(arrObj);
-      } else {
-        console.log('Failed: ', response.statusCode, response.originalStatus);
-      }
+      // } else {
+      //   console.log('Failed: ', response.statusCode, response.originalStatus);
+      // }
 
     })
       .catch(err => {
@@ -236,10 +236,10 @@ module.exports = {
     // find weight and dimension before saving.
     console.log(req.body);
     console.log("searching ... " + req.body.id);
-    pcAPI.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
-      const $ = cheerio.load(response.body);
-    // axios.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
-      // const $ = cheerio.load(response.data);
+    // pcAPI.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
+    //   const $ = cheerio.load(response.body);
+    axios.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
+      const $ = cheerio.load(response.data);
       var i = 0;
       for (i = 0; i < detailTags.length; i++) {
         console.log("... " + detailTags[i]);
