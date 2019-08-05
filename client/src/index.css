@@ -1,7 +1,7 @@
 /* HEADER */
 body, html {
   height: 100%;
-  
+  background-color:white;
 }
 
 /* The hero image */
@@ -32,7 +32,7 @@ color: white;
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body{
-  background: #f2f2f2;
+  background: white;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -139,7 +139,7 @@ position:relative;
 display:table;
 border-collapse:collapse;
 border-spacing:0;
-color:#999;
+color: antiquewhite;
  font-family: arial;
 font-size: 14px;
 text-decoration:none;
@@ -223,6 +223,9 @@ height: 100%;
   }
 } 
 @media only screen and (max-width: 600px) {
+  #myVideo{
+    display: none;
+  }
   .main-menu{
     display: none;
   }
@@ -244,19 +247,25 @@ height: 100%;
 } 
 
 @media only screen and (max-width: 700px){
-  
+  #myVideo{
+    display: none;
+  }
   .main-menu{
     display: none;
   }
 } 
 @media only screen and (max-width: 800px){
-  
+  #myVideo{
+    display: none;
+  }
   .main-menu{
     display: none;
   }
 } 
 @media only screen and (min-width: 900px) {
-  
+  .header2{
+    display: none;
+  }
   .mobNav{
     display: none;
   }
@@ -265,11 +274,12 @@ height: 100%;
     left: 50%;
     transform: translate(-50%, -50%);
     border-style: solid;
-    background-color: #534f4f5d;
-    /* padding: 100px; */
+    background-color: #e8d2b761;
+    /* padding: 100px;
     padding-top: 100px;
-    /* padding-left: 200px; */
-    /* padding-right: 200px; */
+    padding-left: 200px;
+    padding-right: 200px; */
+    padding: 100px 200px;
     align-self: center;
     width: 100%;
     position: relative;
@@ -286,7 +296,17 @@ height: 100%;
 }
 } 
 
+@media only screen and (min-width: 1000px) {
+  .header2{
+    display: none;
+  }
+}
+
 @media only screen and (min-width: 1200px) {
+  .header2{
+    display: none;
+  }
+  
   .mobNav{
     display: none;
   }
