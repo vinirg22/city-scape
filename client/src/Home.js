@@ -30,6 +30,12 @@ class Home extends Component {
     }
 
     submitSearch = event => {
+        if (document.body.style.cursor === "wait") {
+            console.log("searching ....");
+            return;
+        }
+        document.body.style.cursor = "wait";
+
 
         var searchTerm = this.state.keyword.replace(/ +/g, "+");
 
@@ -57,10 +63,12 @@ class Home extends Component {
                 document.getElementsByClassName("search-result")[0].scrollIntoView({
                     behavior: 'smooth'
                 });
-
-
+                document.body.style.cursor = "default";
             })
-            .catch(err => alert(err));
+            .catch(err => {
+                document.body.style.cursor = "default";
+                alert(err);
+            });
     }
 
     saveSearch = (e, product) => {
@@ -82,56 +90,56 @@ class Home extends Component {
             })
     }
 
-
-
     render() {
-        return ([
-
+        return (
             <div>
-                <div className="hero-image hero-image header-image fluid">
-                <img id="headerImg "className="hero-image header2 fluid" src="/images/header.png" alt="header" />
-                    <video className="hero-image header-image fluid" autoPlay muted id="myVideo">
-                        <source src={process.env.PUBLIC_URL + "/images/video2.mp4"} type="video/mp4" />
-                    </video>
-                        <div className="hero-text" >
-                        <div className="wrap clearfix">
-                            <div className="search">
-                                <input
-                                    value={this.state.keyword}
-                                    name="keyword"
-                                    type="text"
-                                    className="searchTerm"
-                                    placeholder="What are you looking for?"
-                                    onChange={this.handleInputChange}
-                                    onKeyDown={this.handleKeyDown}
-                                />
-                                <button type="submit" className="searchButton" onClick={this.submitSearch}>
-                                    <i className="fa fa-search"></i>
-                                </button>
-                            </div>
+                 <div className="hero-image hero-image header-image fluid">
+
+                <img id="headerImg " className="hero-image header2 fluid" src={process.env.PUBLIC_URL + "/images/header.png"} alt="header" />
+                <video className="hero-image header-image fluid" autoPlay muted id="myVideo">
+                    <source src={process.env.PUBLIC_URL + "/images/Video2.mp4"} type="video/mp4" />
+                </video>
+                <div className="hero-text" >
+                    <div className="wrap clearfix">
+                        <div className="search">
+                            <input
+                                value={this.state.keyword}
+                                name="keyword"
+                                type="text"
+                                className="searchTerm"
+                                placeholder="What are you looking for?"
+                                onChange={this.handleInputChange}
+                                onKeyDown={this.handleKeyDown}
+                            />
+                            <button type="submit" className="searchButton" onClick={this.submitSearch}>
+                                <i className="fa fa-search"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div className="container search-result py-3">
-                    <div className="card-columns">
-                        {this.state.products.map(product => (
-                            <div className="card" key={product.id}>
-                                <img src={product.image} className="card-img-top product-img" alt="..." />
-                                <div className="card-body">
-                                    <h5 className="card-title">{product.title}</h5>
-                                    <div className="clearfix">
-                                        <p className="card-text float-left">{product.price}</p>
-                                        <button className="btn-add float-right" onClick={(e) => this.saveSearch(e, product)}>Add</button>
-                                        <img className="save-gif float-right" src={process.env.PUBLIC_URL + "/images/blueloading.gif"} alt="loading" />
-                                    </div>
+            </div>
+            <div className="container search-result py-3">
+                <div className="card-columns">
+                    {this.state.products.map(product => (
+                        <div className="card" key={product.id}>
+                            <img src={product.image} className="card-img-top product-img" alt="..." />
+                            <div className="card-body">
+                                <h5 className="card-title">{product.title}</h5>
+                                <div className="clearfix">
+                                    <p className="card-text float-left">{product.price}</p>
+                                    <button className="btn-add float-right" onClick={(e) => this.saveSearch(e, product)}>Add</button>
+                                    <img className="save-gif float-right" src={process.env.PUBLIC_URL + "/images/blueloading.gif"} alt="loading" />
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    ))}
                 </div>
             </div>
-        ]);
+            </div>
+        );
     }
+
+
 }
 
 export default Home;

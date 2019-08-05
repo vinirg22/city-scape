@@ -58,27 +58,24 @@ module.exports = {
           res.json(info.RateV4Response.Package.Postage.Rate)
       })
       .catch(err => {
-        console.log("...... error");
-        console.log(err);
+        console.log("...... error " + err);
         res.status(422).json(err)
       });
 
   },
 
   scrapeDetail: function (req, res) {
-    console.log("ScrapeDetail " + req.params.id);
     const idList = req.params.id.split("|");
-    console.log(idList);
 
-    // const idList = [ "B003B6S36S"];
+    // idList = ["B01GN58PUW"];
 
     var numCompleted = 0;
     var shippingInfoArr = [];
     for (let x = 0; x < idList.length; x++) {
-      // pcAPI.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
-      //   const $ = cheerio.load(response.body);
-      axios.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
-        const $ = cheerio.load(response.data);
+      pcAPI.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
+        const $ = cheerio.load(response.body);
+      // axios.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
+      //   const $ = cheerio.load(response.data);
         var i = 0;
         for (i = 0; i < detailTags.length; i++) {
           let numRec = $(detailTags[i]).length;
@@ -92,7 +89,15 @@ module.exports = {
                     switch ($(element).find("th").text().trim()) {
                       case "Product Dimensions":
                       case "Package Dimensions":
-                        sdim = $(element).find("td").text().trim();
+                        var detail = $(element).find("td").text().trim().split(";");
+                        sdim = detail[0].trim();
+                        if (detail.length>1) {
+                          if ( detail[1].indexOf("pound")>0) {
+                            weight = detail[1].trim();
+                          } if ( detail[1].indexOf("ounce")>0) {
+                            weight = detail[1].trim();
+                          }
+                        }
                         break;
                       case "Item Weight":
                       case "Shipping Weight":
@@ -170,7 +175,6 @@ module.exports = {
         console.log("..... " + i);
       })
         .catch(err => {
-          // console.log(err);
           numCompleted++;
           console.log(".. catch " + idList[x] + " " + numCompleted + " " + idList.length);
           if (numCompleted === idList.length) {
@@ -184,11 +188,11 @@ module.exports = {
     // A GET route for scraping the echoJS website
     // First, we grab the body of the html with axios
 
-    axios.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
-      const $ = cheerio.load(response.data);
-    // pcAPI.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
-    //   if (response.statusCode === 200 && response.originalStatus === 200) {  // by proxycrawl api
-    //     const $ = cheerio.load(response.body);
+    // axios.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
+    //   const $ = cheerio.load(response.data);
+    pcAPI.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
+      if (response.statusCode === 200 && response.originalStatus === 200) {  // by proxycrawl api
+        const $ = cheerio.load(response.body);
 
         // Now, we grab every h2 within an article tag, and do the following:
         var numRec = $("div.s-result-item").length;
@@ -222,9 +226,9 @@ module.exports = {
 
         // Send data to the client
         res.json(arrObj);
-      // } else {
-      //   console.log('Failed: ', response.statusCode, response.originalStatus);
-      // }
+      } else {
+        console.log('Failed: ', response.statusCode, response.originalStatus);
+      }
 
     })
       .catch(err => {
@@ -234,12 +238,10 @@ module.exports = {
 
   saveProduct: function (req, res) {
     // find weight and dimension before saving.
-    console.log(req.body);
-    console.log("searching ... " + req.body.id);
-    // pcAPI.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
-    //   const $ = cheerio.load(response.body);
-    axios.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
-      const $ = cheerio.load(response.data);
+    pcAPI.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
+      const $ = cheerio.load(response.body);
+    // axios.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
+    //   const $ = cheerio.load(response.data);
       var i = 0;
       for (i = 0; i < detailTags.length; i++) {
         console.log("... " + detailTags[i]);
@@ -309,8 +311,7 @@ module.exports = {
       }
       if (i === detailTags.length) {
         // found nothing
-        console.log("saving ..");
-        console.log(req.body);
+        
         db.Product
           .create(req.body)
           .then(data => res.json(data))
@@ -318,10 +319,7 @@ module.exports = {
       }
     })
       .catch(err => {
-        console.log(err);
-        // found nothing
-        console.log("saving ..");
-        console.log(req.body);
+        
         db.Product
           .create(req.body)
           .then(data => res.json(data))
@@ -330,8 +328,6 @@ module.exports = {
   },
 
   findProduct: function (req, res) {
-    console.log("search ...   userid : " + req.params.id);
-    req.params.id
     db.Product
       .find({ userId: req.params.id })
       .then(dbProduct => res.json(dbProduct))
@@ -343,7 +339,6 @@ module.exports = {
       if (err) { throw err; }
       console.log("Product found, now removing: " + product);
       product.remove();
-      console.log("Product removed");
       res.json(product);
     });
     // db.Product

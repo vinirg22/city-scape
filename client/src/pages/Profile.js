@@ -2,9 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import React, { Component } from 'react';
 import withAuth from './../components/withAuth';
 
-// import Modal from '../components/Modal';
 import API from './../utils/API';
-// import { Link } from 'react-router-dom';
 import "../style/Profile.css"
 
 import MyModal from '../components/Modal';
@@ -171,14 +169,16 @@ class Profile extends Component {
               </button>
               <div className="float-right mt-2 mr-3">
                 <input
+                  id="check-all"
                   type="checkbox"
                   onChange={this.handleAllSelect}
-                /> Select/Clear All
+                />
+                <label for="check-all">&nbsp;&nbsp;Select/Clear All</label>
               </div>
             </div>
             <div className="card-body">
               <div className="card-columns">
-                {this.state.myProducts.map(product => (
+                {this.state.myProducts.map((product, index) => (
                   <div className="card" key={product.id}>
                     <img src={product.image} className="card-img-top product-img" alt="..." />
 
@@ -192,11 +192,13 @@ class Profile extends Component {
                       </div>
                       <div className="checkbox-focus pl-2">
                         <input
+                          id={"cbox"+index}
                           type="checkbox"
                           name="item-focus"
                           checked={product.check}
                           onChange={(e) => this.handleCheckChange(e, product.id)}
-                        /> Select to proceed.
+                        />
+                         <label className="my-0" for={"cbox"+index}>&nbsp;&nbsp;Select to proceed.</label>
                       </div>
                     </div>
                   </div>
