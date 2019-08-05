@@ -1,5 +1,5 @@
 
-## E-merge App
+# E-merge App
 
 This full-stack app allows you search any kind of product on sale and for your own convenience.
 
@@ -30,7 +30,7 @@ Store cart list in DB for persistant storage.
 
 # Data and Domain Layer
 
-Fetch and store list of Products and Categoreis from API Server. The API server mimic and return product data from real life shopping cart option.
+Fetch and store list of Products from API Server. The API server returns product data from real life shopping cart option.
 
 Persistant storage of Shopping List items when User close the App.
 
