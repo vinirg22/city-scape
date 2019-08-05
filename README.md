@@ -32,13 +32,13 @@ Persistant storage of Shopping List items when User close the App.
 
 # Technologies
 
--Proxycrawl API: for scrapping purposes
+-Proxycrawl API/Cheerio: for scrapping purposes
 
 -USPS API: for shipping calculations
 
 -Fast-xml-parser: for xml data conversion into JSON format
 
--Mongoose DB: Data storaging
+-Mongoose DB: Data storing
 
 -Express: Handling client-server request and reponse
 
