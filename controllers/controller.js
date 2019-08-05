@@ -65,17 +65,19 @@ module.exports = {
   },
 
   scrapeDetail: function (req, res) {
+    var api = pcAPI;
+    if (process.env.ENV_DEV) {
+      api = axios;
+    }
     const idList = req.params.id.split("|");
-
     // idList = ["B01GN58PUW"];
 
     var numCompleted = 0;
     var shippingInfoArr = [];
     for (let x = 0; x < idList.length; x++) {
-      pcAPI.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
-        const $ = cheerio.load(response.body);
-      // axios.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
-      //   const $ = cheerio.load(response.data);
+      
+      api.get("https://www.amazon.com/dp/" + idList[x]).then((response) => {
+          const $ = cheerio.load(process.env.ENV_DEV?response.data:response.body);
         var i = 0;
         for (i = 0; i < detailTags.length; i++) {
           let numRec = $(detailTags[i]).length;
@@ -91,10 +93,10 @@ module.exports = {
                       case "Package Dimensions":
                         var detail = $(element).find("td").text().trim().split(";");
                         sdim = detail[0].trim();
-                        if (detail.length>1) {
-                          if ( detail[1].indexOf("pound")>0) {
+                        if (detail.length > 1) {
+                          if (detail[1].indexOf("pound") > 0) {
                             weight = detail[1].trim();
-                          } if ( detail[1].indexOf("ounce")>0) {
+                          } if (detail[1].indexOf("ounce") > 0) {
                             weight = detail[1].trim();
                           }
                         }
@@ -187,48 +189,55 @@ module.exports = {
   scrape: function (req, res) {
     // A GET route for scraping the echoJS website
     // First, we grab the body of the html with axios
+    var api = pcAPI;
+    if (process.env.ENV_DEV) {
+      api = axios;
+    }
 
     // axios.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
-    //   const $ = cheerio.load(response.data);
-    pcAPI.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
-      if (response.statusCode === 200 && response.originalStatus === 200) {  // by proxycrawl api
-        const $ = cheerio.load(response.body);
+    // const $ = cheerio.load(response.data);
+    // pcAPI.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
+    //   if (response.statusCode === 200 && response.originalStatus === 200) {  // by proxycrawl api
+    //     const $ = cheerio.load(response.body);
 
-        // Now, we grab every h2 within an article tag, and do the following:
-        var numRec = $("div.s-result-item").length;
-        console.log("num rec " + numRec);
-        const arrObj = [];
+    api.get("https://www.amazon.com/s?k=" + req.params.keyword).then((response) => {
+      const $ = cheerio.load(process.env.ENV_DEV?response.data:response.body);
 
-        $("div.s-result-item").each(function (i, element) {
-          // Save an empty result object
-          const result = {};
+      // Now, we grab every h2 within an article tag, and do the following:
+      var numRec = $("div.s-result-item").length;
+      console.log("num rec " + numRec);
+      const arrObj = [];
 
-          result.id = $(this).
-            attr("data-asin");
+      $("div.s-result-item").each(function (i, element) {
+        // Save an empty result object
+        const result = {};
 
-          result.image = $(this)
-            .find(".s-image")
-            .attr("src");
-          result.title = $(this)
-            .find("span.a-size-medium.a-color-base.a-text-normal")
-            .text();
+        result.id = $(this).
+          attr("data-asin");
 
-          if (!result.title)
-            result.title = $(this).find("span.a-size-base-plus.a-color-base.a-text-normal").text();
+        result.image = $(this)
+          .find(".s-image")
+          .attr("src");
+        result.title = $(this)
+          .find("span.a-size-medium.a-color-base.a-text-normal")
+          .text();
 
-          result.price = $(this)
-            .find("span.a-offscreen").first()
-            .text();
+        if (!result.title)
+          result.title = $(this).find("span.a-size-base-plus.a-color-base.a-text-normal").text();
 
-          arrObj.push(result);
+        result.price = $(this)
+          .find("span.a-offscreen").first()
+          .text();
 
-        });
+        arrObj.push(result);
 
-        // Send data to the client
-        res.json(arrObj);
-      } else {
-        console.log('Failed: ', response.statusCode, response.originalStatus);
-      }
+      });
+
+      // Send data to the client
+      res.json(arrObj);
+      // } else {
+      //   console.log('Failed: ', response.statusCode, response.originalStatus);
+      // }
 
     })
       .catch(err => {
@@ -238,10 +247,17 @@ module.exports = {
 
   saveProduct: function (req, res) {
     // find weight and dimension before saving.
-    pcAPI.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
-      const $ = cheerio.load(response.body);
+    // pcAPI.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
+    //   const $ = cheerio.load(response.body);
     // axios.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
     //   const $ = cheerio.load(response.data);
+
+    var api = pcAPI;
+    if (process.env.ENV_DEV) {
+      api = axios;
+    }
+    api.get("https://www.amazon.com/dp/" + req.body.id).then((response) => {
+      const $ = cheerio.load(process.env.ENV_DEV?response.data:response.body);
       var i = 0;
       for (i = 0; i < detailTags.length; i++) {
         console.log("... " + detailTags[i]);
@@ -311,7 +327,7 @@ module.exports = {
       }
       if (i === detailTags.length) {
         // found nothing
-        
+
         db.Product
           .create(req.body)
           .then(data => res.json(data))
@@ -319,7 +335,7 @@ module.exports = {
       }
     })
       .catch(err => {
-        
+
         db.Product
           .create(req.body)
           .then(data => res.json(data))
