@@ -27,7 +27,7 @@ class About extends Component {
                             <div className="team-member text-center">
                                 <div className="member-photo">
                                     {/* <!-- member photo --> */}
-                                    <img className="img-responsive" src={process.env.PUBLIC_URL + "/images/john.jpg"} alt="john" />
+                                    <img className="img-responsive" src={process.env.PUBLIC_URL + "/images/John.jpg"} alt="john" />
                                 </div>
 
                                 {/* <!-- member name & designation --> */}
@@ -46,7 +46,7 @@ class About extends Component {
                             <div className="team-member text-center">
                                 <div className="member-photo">
                                     {/* <!-- member photo --> */}
-                                    <img className="img-responsive" src={process.env.PUBLIC_URL + "/images/irving.jpg"} alt="irving" />
+                                    <img className="img-responsive" src={process.env.PUBLIC_URL + "/images/Irving.jpg"} alt="irving" />
                                     {/* <!-- /member photo --> */}
                                     {/* <!-- /member social profile --> */}
                                 </div>
@@ -86,7 +86,7 @@ class About extends Component {
                             <div className="team-member text-center">
                                 <div className="member-photo">
                                     {/* <!-- member photo --> */}
-                                    <img className="img-responsive" src={process.env.PUBLIC_URL + "/images/jack.jpg"} alt="jack" />
+                                    <img className="img-responsive" src={process.env.PUBLIC_URL + "/images/Jack.jpg"} alt="jack" />
                                     {/* <!-- /member photo --> */}
                                 </div>
 

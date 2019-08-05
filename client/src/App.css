@@ -28,15 +28,6 @@
   font-size: large;
 } 
 
-#myVideo{
-  position:fixed;
-  right: 0;
-  bottom: 0;
-  min-width: 100%; 
-  min-height: 100%;
-  z-index: -1;
-}
-
 .search-result h5 {
   color: black;
   font-weight: bolder;

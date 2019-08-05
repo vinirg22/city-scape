@@ -90,15 +90,14 @@ class Home extends Component {
             })
     }
 
-
-
     render() {
         return (
             <div>
-            <div className="hero-image hero-image header-image fluid">
-                {/* <img id="headerImg " className="hero-image header2 fluid" src="/images/header.png" alt="header" /> */}
+                 <div className="hero-image hero-image header-image fluid">
+
+                <img id="headerImg " className="hero-image header2 fluid" src={process.env.PUBLIC_URL + "/images/header.png"} alt="header" />
                 <video className="hero-image header-image fluid" autoPlay muted id="myVideo">
-                    <source src={process.env.PUBLIC_URL + "/images/video2.mp4"} type="video/mp4" />
+                    <source src={process.env.PUBLIC_URL + "/images/Video2.mp4"} type="video/mp4" />
                 </video>
                 <div className="hero-text" >
                     <div className="wrap clearfix">
