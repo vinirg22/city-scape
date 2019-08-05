@@ -42,5 +42,6 @@ Persistant storage of Shopping List items when User close the App.
 
 -Express: Handling client-server request and reponse
 
+-MERN
 
 
