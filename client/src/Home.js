@@ -127,7 +127,7 @@ class Home extends Component {
                                 <h5 className="card-title">{product.title}</h5>
                                 <div className="clearfix">
                                     <p className="card-text float-left">{product.price}</p>
-                                    <button className="btn-add float-right" onClick={(e) => this.saveSearch(e, product)}>Add</button>
+                                    <button className="btn btn-secondary btn-sm btn-add float-right" onClick={(e) => this.saveSearch(e, product)}>Add</button>
                                     <img className="save-gif float-right" src={process.env.PUBLIC_URL + "/images/blueloading.gif"} alt="loading" />
                                 </div>
                             </div>

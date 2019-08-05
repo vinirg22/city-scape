@@ -187,7 +187,7 @@ class Profile extends Component {
                       <div className="clearfix">
                         <p className="card-text float-left">{product.price}</p>
                         {this.renderShippingReady(product)}
-                        <button className="btn-remove float-right" onClick={(e) => this.removeProduct(e, product.id)}>Remove</button>
+                        <button className="btn btn-secondary btn-sm btn-remove float-right" onClick={(e) => this.removeProduct(e, product.id)}>Remove</button>
                         <img className="save-gif float-right" src={process.env.PUBLIC_URL + "/images/blueloading.gif"} alt="loading" />
                       </div>
                       <div className="checkbox-focus pl-2">
