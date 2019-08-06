@@ -3,3 +3,32 @@
     font-size: 15px;
     margin-left: 15px;
 }
+
+.logo-login {
+    width: 85px;
+}
+
+.input-login {
+    background-color: rgba(182, 219, 231, 0.7);
+}
+
+.login-container {
+    width: 460px;
+    border-radius: 10px;
+    border: 1px solid lightgray;
+    background-color: rgba(243, 243, 243, 0.8);
+}
+
+.btn-login {
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    background-color : rgb(219, 219, 219);
+    padding: 3px 5px;
+    margin-left: 10px;
+}
+@media only screen and (min-width: 600px) {
+    .logo-login {
+        width: 105px;
+    }
+
+}
