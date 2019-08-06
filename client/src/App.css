@@ -28,6 +28,11 @@
   font-size: large;
 } 
 
+.search-error {
+  color: red;
+  font-weight: bold;
+}
+
 .search-result h5 {
   color: black;
   font-weight: bolder;

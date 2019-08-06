@@ -14,8 +14,6 @@ class Home extends Component {
         };
     }
 
-    productRender = true;
-
     handleInputChange = event => {
         const { name, value } = event.target;
         this.setState({
@@ -35,14 +33,17 @@ class Home extends Component {
             return;
         }
         document.body.style.cursor = "wait";
-
+        document.getElementsByClassName("search-error")[0].innerText = "";
 
         var searchTerm = this.state.keyword.replace(/ +/g, "+");
 
-        this.productRender = false;
         API.scrapeProduct(searchTerm)
             .then(res => {
-
+                if (res.data.error) {
+                    document.getElementsByClassName("search-error")[0].innerText = res.data.error;
+                    document.body.style.cursor = "default";
+                    return;
+                }
                 // check if duplicate items
                 var uItems = [];
                 for (let i = 0; i < res.data.length - 1; i++) {
@@ -66,8 +67,9 @@ class Home extends Component {
                 document.body.style.cursor = "default";
             })
             .catch(err => {
+                console.log(err);
+                document.getElementsByClassName("search-error")[0].innerText = err;
                 document.body.style.cursor = "default";
-                alert(err);
             });
     }
 
@@ -93,48 +95,49 @@ class Home extends Component {
     render() {
         return (
             <div>
-                 <div className="hero-image hero-image header-image fluid">
+                <div className="hero-image hero-image header-image fluid">
 
-                <img id="headerImg " className="hero-image header2 fluid" src={process.env.PUBLIC_URL + "/images/header.png"} alt="header" />
-                <video className="hero-image header-image fluid" autoPlay muted id="myVideo">
-                    <source src={process.env.PUBLIC_URL + "/images/Video2.mp4"} type="video/mp4" />
-                </video>
-                <div className="hero-text" >
-                    <div className="wrap clearfix">
-                        <div className="search">
-                            <input
-                                value={this.state.keyword}
-                                name="keyword"
-                                type="text"
-                                className="searchTerm"
-                                placeholder="What are you looking for?"
-                                onChange={this.handleInputChange}
-                                onKeyDown={this.handleKeyDown}
-                            />
-                            <button type="submit" className="searchButton" onClick={this.submitSearch}>
-                                <i className="fa fa-search"></i>
-                            </button>
+                    <img id="headerImg " className="hero-image header2 fluid" src={process.env.PUBLIC_URL + "/images/header.png"} alt="header" />
+                    <video className="hero-image header-image fluid" autoPlay muted id="myVideo">
+                        <source src={process.env.PUBLIC_URL + "/images/Video2.mp4"} type="video/mp4" />
+                    </video>
+                    <div className="hero-text" >
+                        <div className="wrap clearfix">
+                            <div className="search">
+                                <input
+                                    value={this.state.keyword}
+                                    name="keyword"
+                                    type="text"
+                                    className="searchTerm"
+                                    placeholder="What are you looking for?"
+                                    onChange={this.handleInputChange}
+                                    onKeyDown={this.handleKeyDown}
+                                />
+                                <button type="submit" className="searchButton" onClick={this.submitSearch}>
+                                    <i className="fa fa-search"></i>
+                                </button>
+                            </div>
+                            <h5 className="search-error mt-2"> </h5>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="container search-result py-3">
-                <div className="card-columns">
-                    {this.state.products.map(product => (
-                        <div className="card" key={product.id}>
-                            <img src={product.image} className="card-img-top product-img" alt="..." />
-                            <div className="card-body">
-                                <h5 className="card-title">{product.title}</h5>
-                                <div className="clearfix">
-                                    <p className="card-text float-left">{product.price}</p>
-                                    <button className="btn btn-secondary btn-sm btn-add float-right" onClick={(e) => this.saveSearch(e, product)}>Add</button>
-                                    <img className="save-gif float-right" src={process.env.PUBLIC_URL + "/images/blueloading.gif"} alt="loading" />
+                <div className="container search-result py-3">
+                    <div className="card-columns">
+                        {this.state.products.map(product => (
+                            <div className="card" key={product.id}>
+                                <img src={product.image} className="card-img-top product-img" alt="..." />
+                                <div className="card-body">
+                                    <h5 className="card-title">{product.title}</h5>
+                                    <div className="clearfix">
+                                        <p className="card-text float-left">{product.price}</p>
+                                        <button className="btn btn-secondary btn-sm btn-add float-right" onClick={(e) => this.saveSearch(e, product)}>Add</button>
+                                        <img className="save-gif float-right" src={process.env.PUBLIC_URL + "/images/blueloading.gif"} alt="loading" />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </div>
             </div>
         );
     }
