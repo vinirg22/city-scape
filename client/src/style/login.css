@@ -13,7 +13,7 @@
 }
 
 .login-container {
-    width: 460px;
+    width: 80%;
     border-radius: 10px;
     border: 1px solid lightgray;
     background-color: rgba(243, 243, 243, 0.8);
@@ -30,5 +30,10 @@
     .logo-login {
         width: 105px;
     }
+}
 
+@media screen and (min-width: 500px) {
+    .login-container {
+        width: 460px;
+    }
 }
