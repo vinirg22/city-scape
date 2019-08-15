@@ -83,13 +83,17 @@ class Home extends Component {
         e.target.nextSibling.style.display = "inline";
 
         product.userId = this.Auth.getProfile().id;
-        console.log(product);
+        // console.log(product);
         API.saveProduct(product)
             .then((res) => {
+                // console.log("saving ....");
                 const products = this.state.products.filter(item => product.id !== item.id);
-
                 this.setState({ products: products });
             })
+            .catch(err => {
+                const products = this.state.products.filter(item => product.id !== item.id);
+                this.setState({ products: products });
+            });
     }
 
     render() {
